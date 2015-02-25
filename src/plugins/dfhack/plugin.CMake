@@ -1,0 +1,4 @@
+SET(PLUGIN_INFO "DFHack: MOAI extensions needed to run Hack'n'Slash ")
+SET(PLUGIN_TARGET "dfhack")
+SET(PLUGIN_PREFIX "DFHack")
+SET(PLUGIN_NEEDS_UPDATE FALSE )
