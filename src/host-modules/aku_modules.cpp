@@ -229,7 +229,11 @@ void AKUModulesParseArgs ( int argc, char** argv ) {
 	#else
 	
 		if ( argc < 2 ) {
-			AKURunScript ( "main.lua" );
+			#ifdef AKU_MAIN_SCRIPT
+				AKURunScript ( AKU_MAIN_SCRIPT );
+			#else
+				AKURunScript ( "main.lua" );
+			#endif
 		}
 		else {
 

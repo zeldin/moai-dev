@@ -164,6 +164,10 @@ if (PLUGIN_DIR)
   set (MOAI_PLUGINS TRUE)
 endif (PLUGIN_DIR)
 
+if (MAIN_SCRIPT)
+  set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DAKU_MAIN_SCRIPT=\\\"${MAIN_SCRIPT}\\\"" )
+  set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DAKU_MAIN_SCRIPT=\\\"${MAIN_SCRIPT}\\\"" )
+endif (MAIN_SCRIPT)
 
 #
 # Moai SDK Extensions
