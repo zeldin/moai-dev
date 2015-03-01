@@ -24,6 +24,7 @@ private:
 	//----------------------------------------------------------------//
 	static int		_getLoc					( lua_State* L );
 	static int		_setCallback			( lua_State* L );
+	static int		_show	( lua_State* L );
 
 public:
 

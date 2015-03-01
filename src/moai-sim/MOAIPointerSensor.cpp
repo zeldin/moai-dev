@@ -41,6 +41,15 @@ int MOAIPointerSensor::_setCallback ( lua_State* L ) {
 	return 0;
 }
 
+//----------------------------------------------------------------//
+int MOAIPointerSensor::_show( lua_State* L )
+{
+	MOAI_LUA_SETUP ( MOAIPointerSensor, "UB" )
+	bool show = state.GetValue < bool >( 2, true );
+
+	return 0;
+}
+
 //================================================================//
 // MOAIPointerSensor
 //================================================================//
@@ -84,6 +93,7 @@ void MOAIPointerSensor::RegisterLuaFuncs ( MOAILuaState& state ) {
 	luaL_Reg regTable [] = {
 		{ "getLoc",			_getLoc },
 		{ "setCallback",	_setCallback },
+		{ "show", _show },
 		{ NULL, NULL }
 	};
 
