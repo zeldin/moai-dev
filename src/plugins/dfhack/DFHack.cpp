@@ -122,6 +122,15 @@ int DFHack::_getStorageListing ( lua_State* L )
 
 //----------------------------------------------------------------//
 
+int DFHack::_beginSubscriptionUpdate ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  lua_pushnil(state);
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
 DFHack::DFHack ()
 {
   RTTI_BEGIN
@@ -157,6 +166,7 @@ void DFHack::RegisterLuaClass ( MOAILuaState& state )
     { "loadFromInstructionStream",   _loadFromInstructionStream },
     { "saveInstructionStream",   _saveInstructionStream },
     { "getStorageListing",  _getStorageListing },
+    { "beginSubscriptionUpdate",  _beginSubscriptionUpdate },
     { NULL, NULL }
   };
   luaL_register ( state, 0, regTable );

@@ -13,6 +13,7 @@ private:
 	  static int	_loadFromInstructionStream ( lua_State* L );
 	  static int	_saveInstructionStream ( lua_State* L );
 	  static int	_getStorageListing ( lua_State* L );
+	  static int	_beginSubscriptionUpdate ( lua_State* L );
 public:
 	  DECL_LUA_SINGLETON ( DFHack )
 

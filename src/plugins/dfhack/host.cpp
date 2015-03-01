@@ -5,6 +5,7 @@
 
 #include <dfhack/host.h>
 #include <dfhack/DFHack.h>
+#include <dfhack/DFHackSubscriber.h>
 
 static bool sIsInitialized = false;
 
@@ -26,6 +27,7 @@ void DFHackContextInitialize () {
     sIsInitialized = true;
   }
   REGISTER_LUA_CLASS ( DFHack )
+  REGISTER_LUA_CLASS ( DFHackSubscriber )
 
   char buf[PATH_MAX+1];
   ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf)-1);
