@@ -144,6 +144,12 @@ int MOAIGfxDevice::_setDefaultTexture ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+
+int MOAIGfxDevice::_setErrorTexture ( lua_State* L ) {
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	setPenColor
 
 	@in		number r
@@ -639,7 +645,7 @@ void MOAIGfxDevice::RegisterLuaClass ( MOAILuaState& state ) {
 		{ "getViewSize",				_getViewSize },
 		{ "isProgrammable",				_isProgrammable },
 		{ "setDefaultTexture",			_setDefaultTexture },
-		{ "setErrorTexture",			_setDefaultTexture },
+		{ "setErrorTexture",			_setErrorTexture },
 		{ "setListener",				&MOAIGlobalEventSource::_setListener < MOAIGfxDevice > },
 		{ "setPenColor",				_setPenColor },
 		{ "setPenWidth",				_setPenWidth },
