@@ -1,8 +1,54 @@
 #include <moai_config.h>
 #include <zl-util/headers.h>
 #include <moai-core/headers.h>
+#include <moai-sim/headers.h>
 
 #include <dfhack/DFHack.h>
+
+//----------------------------------------------------------------//
+
+STLString DFHack::BuildLocalDocumentFilename( MOAILuaState &state, int idx )
+{
+  idx = state.AbsIndex(idx);
+  cc8 *p = state.GetValue<cc8*>(idx, "");
+  if (*p != '/') {
+    MOAIEnvironment::Get ().PushLuaClassTable ( state );
+    if ( state.GetFieldWithType ( -1, MOAI_ENV_documentDirectory,
+				  LUA_TSTRING )) {
+      cc8 *str = lua_tostring(state, -1);
+      if (*str) {
+	lua_pushstring(state, "/");
+	lua_pushvalue(state, idx);
+	lua_concat(state, 3);
+	STLString s = lua_tostring(state, -1);
+	state.Pop(2);
+	return s;
+      }
+      state.Pop(2);
+    } else
+      state.Pop(1);
+  }
+  return p;
+}
+
+//----------------------------------------------------------------//
+
+int DFHack::ftWalk(const char *fpath, const struct stat *sb, int typeflag)
+{
+  if (fpath[0] == '.' && fpath[1] == '/')
+    fpath += 2;
+  if (fpath[0] == '.' && fpath[1] == 0)
+    return 0;
+  if (typeflag == FTW_F) {
+    MOAIScopedLuaState state = MOAILuaRuntime::Get ().State ();
+    STLString lpath = fpath;
+    lpath.to_lower();
+    lua_pushstring(state, lpath);
+    lua_pushstring(state, fpath);
+    lua_settable(state, -3);
+  }
+  return 0;
+}
 
 //----------------------------------------------------------------//
 
@@ -10,7 +56,7 @@ int DFHack::_loadFromInstructionStream ( lua_State* L )
 {
   MOAILuaState state ( L );
   if ( !state.CheckParams ( 1, "S" )) return 0;
-  cc8* path = state.GetValue < cc8* >( 1, "" );
+  STLString path = BuildLocalDocumentFilename(state, 1);
   bool localOnly = state.GetValue < bool >( 2, false );
 
   ZLFileStream stream;
@@ -27,7 +73,7 @@ int DFHack::_loadFromInstructionStream ( lua_State* L )
     }
     stream.Close ();
   } else {
-    MOAILog ( NULL, MOAILogMessages::MOAI_FileOpenError_S, path );
+    MOAILog ( NULL, MOAILogMessages::MOAI_FileOpenError_S, path.str() );
   }
 
   return numResults;
@@ -39,7 +85,7 @@ int DFHack::_saveInstructionStream ( lua_State* L )
 {
   MOAILuaState state ( L );
   if ( !state.CheckParams ( 1, "STTNB" )) return 0;
-  cc8* path = state.GetValue < cc8* >( 1, "" );
+  STLString path = BuildLocalDocumentFilename(state, 1);
   int registerCount = state.GetValue < s16 >( 4, 0 );
   bool storeLocal = state.GetValue < bool >( 5, false );
 
@@ -54,10 +100,24 @@ int DFHack::_saveInstructionStream ( lua_State* L )
     func.dump(writer, state);
     stream.Close ();
   } else {
-    MOAILog ( NULL, MOAILogMessages::MOAI_FileOpenError_S, path );
+    MOAILog ( NULL, MOAILogMessages::MOAI_FileOpenError_S, path.str() );
   }
 
   return 0;
+}
+
+//----------------------------------------------------------------//
+
+int DFHack::_getStorageListing ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  lua_pushstring(state, "");
+  lua_newtable(state);
+  STLString oldCwd = ZLFileSys::GetCurrentPath();
+  ZLFileSys::SetCurrentPath(BuildLocalDocumentFilename(state, -2));
+  ftw(".", ftWalk, 16);
+  ZLFileSys::SetCurrentPath(oldCwd);
+  return 1;
 }
 
 //----------------------------------------------------------------//
@@ -96,6 +156,7 @@ void DFHack::RegisterLuaClass ( MOAILuaState& state )
   luaL_Reg regTable [] = {
     { "loadFromInstructionStream",   _loadFromInstructionStream },
     { "saveInstructionStream",   _saveInstructionStream },
+    { "getStorageListing",  _getStorageListing },
     { NULL, NULL }
   };
   luaL_register ( state, 0, regTable );
