@@ -130,6 +130,8 @@ void AKUSimContextInitialize () {
 		REGISTER_LUA_CLASS ( MOAIFreeTypeFontReader )
 	#endif
 	
+	REGISTER_LUA_CLASS ( MOAIMaterial )
+
 	MOAIEnvironment::Get ().DetectEnvironment ();
 }
 

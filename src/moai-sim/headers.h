@@ -131,4 +131,6 @@
 #include <moai-sim/MOAITextStyle.h>
 #include <moai-sim/MOAITextStyler.h>
 
+#include <moai-sim/MOAIMaterial.h>
+
 #endif
