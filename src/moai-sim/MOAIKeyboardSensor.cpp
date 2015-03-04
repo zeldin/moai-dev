@@ -186,6 +186,22 @@ int MOAIKeyboardSensor::_setCallback ( lua_State* L ) {
 	return 0;
 }
 
+//----------------------------------------------------------------//
+/**	@name	setTextCallback
+	@text	Sets or clears the callback to be issued when text is input.
+
+	@in		MOAIKeyboardSensor self
+	@opt	function callback			Default value is nil.
+	@out	nil
+*/
+int MOAIKeyboardSensor::_setTextCallback ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIKeyboardSensor, "U" )
+
+	self->mOnText.SetRef ( state, 2 );
+
+	return 0;
+}
+
 //================================================================//
 // MOAIKeyboardSensor
 //================================================================//
@@ -297,6 +313,7 @@ void MOAIKeyboardSensor::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "keyIsUp",				_keyIsUp },
 		{ "keyUp",					_keyUp },
 		{ "setCallback",			_setCallback },
+		{ "setTextCallback",			_setTextCallback },
 		{ NULL, NULL }
 	};
 

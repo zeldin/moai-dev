@@ -63,6 +63,7 @@ private:
 	u32 mClearQueue [ MOAIKeyCodes::TOTAL ];
 	
 	MOAILuaStrongRef		mOnKey;
+	MOAILuaStrongRef		mOnText;
 
 	//----------------------------------------------------------------//
 	static int		_keyDown				( lua_State* L );
@@ -70,6 +71,7 @@ private:
 	static int		_keyIsUp				( lua_State* L );
 	static int		_keyUp					( lua_State* L );
 	static int		_setCallback			( lua_State* L );
+	static int		_setTextCallback		( lua_State* L );
 
 public:
 
