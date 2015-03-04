@@ -103,6 +103,8 @@ private:
 	static int		_setAutoClearForces			( lua_State* L );
 	static int		_setDebugDrawEnabled		( lua_State* L );
 	static int		_setDebugDrawFlags			( lua_State* L );
+	static int		_setDebugDrawCategoryTint	( lua_State* L );
+	static int		_setDebugDrawFillColor		( lua_State* L );
 	static int		_setGravity					( lua_State* L );
 	static int		_setIterations				( lua_State* L );
 	static int		_setLinearSleepTolerance	( lua_State* L );

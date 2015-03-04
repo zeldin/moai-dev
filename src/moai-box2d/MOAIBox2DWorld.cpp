@@ -837,6 +837,28 @@ int MOAIBox2DWorld::_setDebugDrawFlags ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/**	@name	setDebugDrawCategoryTint
+*/
+int MOAIBox2DWorld::_setDebugDrawCategoryTint ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIBox2DWorld, "U" )
+
+	fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+
+	return 0;
+}
+
+//----------------------------------------------------------------//
+/**	@name	setDebugDrawFillColor
+*/
+int MOAIBox2DWorld::_setDebugDrawFillColor ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIBox2DWorld, "U" )
+
+	fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	setGravity
 	@text	See Box2D documentation.
 	
@@ -1101,6 +1123,8 @@ void MOAIBox2DWorld::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setAutoClearForces",			_setAutoClearForces },
 		{ "setDebugDrawEnabled",		_setDebugDrawEnabled },
 		{ "setDebugDrawFlags",			_setDebugDrawFlags },
+		{ "setDebugDrawCategoryTint",			_setDebugDrawCategoryTint },
+		{ "setDebugDrawFillColor",			_setDebugDrawFillColor },
 		{ "setGravity",					_setGravity },
 		{ "setIterations",				_setIterations },
 		{ "setLinearSleepTolerance",	_setLinearSleepTolerance },
