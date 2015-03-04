@@ -226,7 +226,7 @@ static void read_string(LexState *ls, int delim, TValue *tv)
       case END_OF_STREAM: continue;
       default:
 	if (!lj_char_isdigit(c))
-	  goto err_xesc;
+	  break; /* goto err_xesc; */
 	c -= '0';  /* Decimal escape '\ddd'. */
 	if (lj_char_isdigit(next(ls))) {
 	  c = c*10 + (ls->current - '0');
