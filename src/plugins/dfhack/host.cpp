@@ -50,6 +50,7 @@ void DFHackContextInitialize () {
   }
   MOAIEnvironment::Get ().SetValue ( MOAI_ENV_documentDirectory, docDir );
 
-  AKURunScript ( "Data/Scripts/config.lua" );
+  if (ZLFileSys::CheckFileExists ( "Data/Scripts/config.lua" ))
+    AKURunScript ( "Data/Scripts/config.lua" );
 }
 
