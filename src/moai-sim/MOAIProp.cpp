@@ -674,6 +674,17 @@ int MOAIProp::_setTexture ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/**	@name	setMaterial
+*/
+int MOAIProp::_setMaterial ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIProp, "U" )
+
+	fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	setUVTransform
 	@text	Sets or clears the prop's UV transform.
 	
@@ -1237,6 +1248,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setScissorRect",		_setScissorRect },
 		{ "setShader",			_setShader },
 		{ "setTexture",			_setTexture },
+		{ "setMaterial",		_setMaterial },
 		{ "setUVTransform",		_setUVTransform },
 		{ "setVisible",			_setVisible },
 		{ NULL, NULL }

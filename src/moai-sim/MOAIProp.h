@@ -127,6 +127,7 @@ private:
 	static int		_getScissorRect		( lua_State* L );
 	static int		_setShader			( lua_State* L );
 	static int		_setTexture			( lua_State* L );
+	static int		_setMaterial			( lua_State* L );
 	static int		_setUVTransform		( lua_State* L );
 	static int		_setVisible			( lua_State* L );
 
