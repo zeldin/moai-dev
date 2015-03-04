@@ -264,6 +264,28 @@ void MOAIKeyboardSensor::RegisterLuaClass ( MOAILuaState& state ) {
 	state.SetField ( -1, "SHIFT", ( u32 )MOAIKeyCodes::SHIFT );
 	state.SetField ( -1, "CONTROL", ( u32 )MOAIKeyCodes::CONTROL );
 	state.SetField ( -1, "ALT", ( u32 )MOAIKeyCodes::ALT );
+
+	state.SetField ( -1, "UP", ( u32 )MOAIKeyCodes::UP );
+	state.SetField ( -1, "DOWN", ( u32 )MOAIKeyCodes::DOWN );
+	state.SetField ( -1, "RIGHT", ( u32 )MOAIKeyCodes::RIGHT );
+	state.SetField ( -1, "LEFT", ( u32 )MOAIKeyCodes::LEFT );
+	state.SetField ( -1, "INSERT", ( u32 )MOAIKeyCodes::INSERT );
+	state.SetField ( -1, "HOME", ( u32 )MOAIKeyCodes::HOME );
+	state.SetField ( -1, "END", ( u32 )MOAIKeyCodes::END );
+	state.SetField ( -1, "PAGE_UP", ( u32 )MOAIKeyCodes::PAGE_UP );
+	state.SetField ( -1, "PAGE_DOWN", ( u32 )MOAIKeyCodes::PAGE_DOWN );
+	state.SetField ( -1, "F1", ( u32 )MOAIKeyCodes::F1 );
+	state.SetField ( -1, "F2", ( u32 )MOAIKeyCodes::F2 );
+	state.SetField ( -1, "F3", ( u32 )MOAIKeyCodes::F3 );
+	state.SetField ( -1, "F4", ( u32 )MOAIKeyCodes::F4 );
+	state.SetField ( -1, "F5", ( u32 )MOAIKeyCodes::F5 );
+	state.SetField ( -1, "F6", ( u32 )MOAIKeyCodes::F6 );
+	state.SetField ( -1, "F7", ( u32 )MOAIKeyCodes::F7 );
+	state.SetField ( -1, "F8", ( u32 )MOAIKeyCodes::F8 );
+	state.SetField ( -1, "F9", ( u32 )MOAIKeyCodes::F9 );
+	state.SetField ( -1, "F10", ( u32 )MOAIKeyCodes::F10 );
+	state.SetField ( -1, "F11", ( u32 )MOAIKeyCodes::F11 );
+	state.SetField ( -1, "F12", ( u32 )MOAIKeyCodes::F12 );
 }
 
 //----------------------------------------------------------------//
