@@ -27,6 +27,8 @@ private:
 	static int	_setRect				( lua_State* L );
 	static int	_setUVQuad				( lua_State* L );
 	static int	_setUVRect				( lua_State* L );
+	static int	_getRect				( lua_State* L );
+	static int	_getUVQuad				( lua_State* L );
 	static int	_transform				( lua_State* L );
 	static int	_transformUV			( lua_State* L );
 	

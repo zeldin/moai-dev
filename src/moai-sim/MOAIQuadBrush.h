@@ -39,6 +39,7 @@ public:
 	void				SetUVs				( float x0, float y0, float x1, float y1 );
 	void				SetUVs				( const USVec2D& v0, const USVec2D& v1, const USVec2D& v2, const USVec2D& v3 );
 	void				SetUVs				( float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3 );
+	void				GetUVs				( USVec2D& v0, USVec2D& v1, USVec2D& v2, USVec2D& v3 ) const;
 	void				SetVerts			( const ZLRect& rect );
 	void				SetVerts			( float* buffer );
 	void				SetVerts			( float x0, float y0, float x1, float y1 );

@@ -178,6 +178,75 @@ int MOAIGfxQuadDeck2D::_setUVRect ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/**	@name	getRect
+	@text	Get bounding rect given a valid deck index.
+
+	@in		MOAIGfxQuadDeck2D self
+	@in		number idx	Index of the quad.
+	@out		number xMin
+	@out		number yMin
+	@out		number xMax
+	@out		number yMax
+*/
+int MOAIGfxQuadDeck2D::_getRect ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIGfxQuadDeck2D, "UN" )
+
+	u32 idx = state.GetValue < u32 >( 2, 1 ) - 1;
+	if ( MOAILogMessages::CheckIndexPlusOne ( idx, self->mQuads.Size (), L )) {
+		if ( idx < self->mQuads.Size ()) {
+			ZLRect rect = self->mQuads [ idx ].GetVtxBounds ();
+
+			lua_pushnumber (L, rect.mXMin);
+			lua_pushnumber (L, rect.mYMin);
+			lua_pushnumber (L, rect.mXMax);
+			lua_pushnumber (L, rect.mYMax);
+			return 4;
+		}
+	}
+	return 0;
+}
+
+//----------------------------------------------------------------//
+/**	@name	getUVQuad
+	@text	Get UV space quad given a valid deck index. Vertex order is
+			clockwise from upper left (xMin, yMax)
+
+	@in		MOAIGfxQuadDeck2D self
+	@in		number idx	Index of the quad.
+	@out		number x0
+	@out		number y0
+	@out		number x1
+	@out		number y1
+	@out		number x2
+	@out		number y2
+	@out		number x3
+	@out		number y3
+*/
+int MOAIGfxQuadDeck2D::_getUVQuad ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIGfxQuadDeck2D, "UN" )
+
+	u32 idx = state.GetValue < u32 >( 2, 1 ) - 1;
+	if ( MOAILogMessages::CheckIndexPlusOne ( idx, self->mQuads.Size (), L )) {
+
+		ZLQuad quad;
+
+		self->mQuads [ idx ].GetUVs ( quad.mV [ 0 ], quad.mV [ 1 ], quad.mV [ 2 ], quad.mV [ 3 ]);
+
+		lua_pushnumber (L, quad.mV [ 0 ].mX);
+		lua_pushnumber (L, quad.mV [ 0 ].mY);
+		lua_pushnumber (L, quad.mV [ 1 ].mX);
+		lua_pushnumber (L, quad.mV [ 1 ].mY);
+		lua_pushnumber (L, quad.mV [ 2 ].mX);
+		lua_pushnumber (L, quad.mV [ 2 ].mY);
+		lua_pushnumber (L, quad.mV [ 3 ].mX);
+		lua_pushnumber (L, quad.mV [ 3 ].mY);
+		return 8;
+	}
+
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	transform
 	@text	Apply the given MOAITransform to all the vertices in the deck.
 	
@@ -305,6 +374,8 @@ void MOAIGfxQuadDeck2D::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setRect",			_setRect },
 		{ "setUVQuad",			_setUVQuad },
 		{ "setUVRect",			_setUVRect },
+		{ "getRect",			_getRect },
+		{ "getUVQuad",			_getUVQuad },
 		{ "transform",			_transform },
 		{ "transformUV",		_transformUV },
 		{ NULL, NULL }

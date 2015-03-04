@@ -185,6 +185,22 @@ void MOAIQuadBrush::SetUVs ( float x0, float y0, float x1, float y1, float x2, f
 }
 
 //----------------------------------------------------------------//
+void MOAIQuadBrush::GetUVs ( USVec2D& v0, USVec2D& v1, USVec2D& v2, USVec2D& v3 ) const {
+
+	// left top
+	v0 = this->mUV [ 0 ];
+
+	// right top
+	v1 = this->mUV [ 1 ];
+
+	// right bottom
+	v2 = this->mUV [ 2 ];
+
+	// left bottom
+	v3 = this->mUV [ 3 ];
+}
+
+//----------------------------------------------------------------//
 void MOAIQuadBrush::SetVerts ( const ZLRect& rect ) {
 	
 	// left top
