@@ -117,6 +117,7 @@ protected:
 	static int		_load					( lua_State* L );
 	static int		_reserveUniforms		( lua_State* L );
 	static int		_setVertexAttribute		( lua_State* L );
+	static int		_setUniformValue		( lua_State* L );
 	
 	//----------------------------------------------------------------//
 	u32				CompileShader				( u32 type, cc8* source );

@@ -523,6 +523,20 @@ int MOAIShader::_setVertexAttribute ( lua_State* L ) {
 	return 0;
 }
 
+//----------------------------------------------------------------//
+/**	@name	setUniformValue
+*/
+int MOAIShader::_setUniformValue ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIShader, "UN" )
+
+	u32 idx					= state.GetValue < u32 >( 2, 1 ) - 1;
+
+	fprintf(stderr, "STUB: %s idx = %u, %u more args\n",
+		__PRETTY_FUNCTION__, (unsigned)idx, lua_gettop(L)-2);
+
+	return 0;
+}
+
 //================================================================//
 // MOAIShader
 //================================================================//
@@ -849,6 +863,7 @@ void MOAIShader::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "load",						_load },
 		{ "reserveUniforms",			_reserveUniforms },
 		{ "setVertexAttribute",			_setVertexAttribute },
+		{ "setUniformValue",			_setUniformValue },
 		{ NULL, NULL }
 	};
 	luaL_register ( state, 0, regTable );
