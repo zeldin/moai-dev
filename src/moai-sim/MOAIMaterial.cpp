@@ -9,7 +9,7 @@ int MOAIMaterial::_setShader		( lua_State* L ) {
 }
 
 int MOAIMaterial::_setShaderValue		( lua_State* L ) {
-  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+  //fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
   return 0;
 }
 
