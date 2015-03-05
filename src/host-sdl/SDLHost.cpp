@@ -27,7 +27,22 @@ namespace InputSensorID {
 		MOUSE_LEFT,
 		MOUSE_MIDDLE,
 		MOUSE_RIGHT,
+		MOUSE_SCROLL_UP,
+		MOUSE_SCROLL_DOWN,
 		TOUCH,
+		GAMEPAD_STICK_LEFT,
+		GAMEPAD_BUTTON_A,
+		GAMEPAD_BUTTON_B,
+		GAMEPAD_BUTTON_X,
+		GAMEPAD_BUTTON_Y,
+		GAMEPAD_BUTTON_DPAD_UP,
+		GAMEPAD_BUTTON_DPAD_DOWN,
+		GAMEPAD_BUTTON_DPAD_LEFT,
+		GAMEPAD_BUTTON_DPAD_RIGHT,
+		GAMEPAD_BUTTON_L_SHOULDER,
+		GAMEPAD_BUTTON_R_SHOULDER,
+		GAMEPAD_BUTTON_START,
+		GAMEPAD_BUTTON_BACK,
 		TOTAL,
 	};
 }
@@ -112,6 +127,22 @@ void Init ( int argc, char** argv ) {
 	AKUSetInputDeviceButton			( InputDeviceID::DEVICE, InputSensorID::MOUSE_LEFT,		"mouseLeft" );
 	AKUSetInputDeviceButton			( InputDeviceID::DEVICE, InputSensorID::MOUSE_MIDDLE,	"mouseMiddle" );
 	AKUSetInputDeviceButton			( InputDeviceID::DEVICE, InputSensorID::MOUSE_RIGHT,	"mouseRight" );
+	AKUSetInputDeviceButton			( InputDeviceID::DEVICE, InputSensorID::MOUSE_SCROLL_UP,	"mouseScrollUp" );
+	AKUSetInputDeviceButton			( InputDeviceID::DEVICE, InputSensorID::MOUSE_SCROLL_DOWN,	"mouseScrollDown" );
+
+	AKUSetInputDeviceJoystick ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_STICK_LEFT, "gamepadStickLeft" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_A, "gamepadButtonA" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_B, "gamepadButtonB" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_X, "gamepadButtonX" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_Y, "gamepadButtonY" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_DPAD_UP, "gamepadButtonDPadUp" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_DPAD_DOWN, "gamepadButtonDPadDown" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_DPAD_LEFT, "gamepadButtonDPadLeft" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_DPAD_RIGHT, "gamepadButtonDPadRight" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_L_SHOULDER, "gamepadButtonLShoulder" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_R_SHOULDER, "gamepadButtonRShoulder" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_START, "gamepadButtonStart" );
+	AKUSetInputDeviceButton   ( InputDeviceID::DEVICE, InputSensorID::GAMEPAD_BUTTON_BACK, "gamepadButtonBack" );
 
 	AKUSetFunc_EnterFullscreenMode ( _AKUEnterFullscreenModeFunc );
 	AKUSetFunc_ExitFullscreenMode ( _AKUExitFullscreenModeFunc );
