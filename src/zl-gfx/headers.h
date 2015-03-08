@@ -290,6 +290,8 @@ extern void		zglShaderSource					( u32 shader, u32 count, const char** string, c
 extern void		zglValidateProgram				( u32 program );
 extern void		zglUniform1f					( u32 location, float v0 );
 extern void		zglUniform1i					( u32 location, s32 v0 );
+extern void		zglUniform2fv					( u32 location, u32 count, const float* value );
+extern void		zglUniform3fv					( u32 location, u32 count, const float* value );
 extern void		zglUniform4fv					( u32 location, u32 count, const float* value );
 extern void		zglUniformMatrix4fv				( u32 location, u32 count, bool transpose, const float* value );
 extern void		zglUseProgram					( u32 program );

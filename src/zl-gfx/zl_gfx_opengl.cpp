@@ -903,6 +903,16 @@ void zglUniform1i ( u32 location, s32 v0 ) {
 }
 
 //----------------------------------------------------------------//
+void zglUniform2fv ( u32 location, u32 count, const float* value ) {
+	glUniform2fv (( GLint )location, ( GLsizei )count, ( const GLfloat* )value );
+}
+
+//----------------------------------------------------------------//
+void zglUniform3fv ( u32 location, u32 count, const float* value ) {
+	glUniform3fv (( GLint )location, ( GLsizei )count, ( const GLfloat* )value );
+}
+
+//----------------------------------------------------------------//
 void zglUniform4fv ( u32 location, u32 count, const float* value ) {
 	glUniform4fv (( GLint )location, ( GLsizei )count, ( const GLfloat* )value );
 }

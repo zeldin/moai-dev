@@ -63,7 +63,16 @@ void MOAIShaderUniform::Bind () {
 			
 			case UNIFORM_COLOR:
 			case UNIFORM_PEN_COLOR:
+			case UNIFORM_VEC4:
 				zglUniform4fv ( this->mAddr, 1, this->mBuffer );
+				break;
+
+			case UNIFORM_VEC3:
+				zglUniform3fv ( this->mAddr, 1, this->mBuffer );
+				break;
+
+			case UNIFORM_VEC2:
+				zglUniform2fv ( this->mAddr, 1, this->mBuffer );
 				break;
 			
 			case UNIFORM_VIEW_PROJ:
@@ -71,6 +80,7 @@ void MOAIShaderUniform::Bind () {
 			case UNIFORM_WORLD_VIEW_PROJ:
 			case UNIFORM_WORLD_VIEW:
 			case UNIFORM_TRANSFORM:
+			case UNIFORM_MATRIX:
 				zglUniformMatrix4fv ( this->mAddr, 1, false, this->mBuffer );
 				break;
 		}
@@ -215,11 +225,36 @@ void MOAIShaderUniform::SetType ( u32 type ) {
 			this->SetValue ( color );
 			break;
 		}
+		case UNIFORM_VEC4: {
+
+			this->mBuffer.Init ( 4 );
+
+			float m [ 4 ] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			this->SetBuffer ( m, sizeof ( m ));
+			break;
+		}
+		case UNIFORM_VEC3: {
+
+			this->mBuffer.Init ( 3 );
+
+			float m [ 3 ] = { 1.0f, 1.0f, 1.0f };
+			this->SetBuffer ( m, sizeof ( m ));
+			break;
+		}
+		case UNIFORM_VEC2: {
+
+			this->mBuffer.Init ( 2 );
+
+			float m [ 2 ] = { 1.0f, 1.0f };
+			this->SetBuffer ( m, sizeof ( m ));
+			break;
+		}
 		case UNIFORM_VIEW_PROJ:
 		case UNIFORM_WORLD:
 		case UNIFORM_WORLD_VIEW:
 		case UNIFORM_WORLD_VIEW_PROJ:
-		case UNIFORM_TRANSFORM: {
+		case UNIFORM_TRANSFORM:
+		case UNIFORM_MATRIX: {
 		
 			this->mBuffer.Init ( 16 );
 			
@@ -531,8 +566,25 @@ int MOAIShader::_setUniformValue ( lua_State* L ) {
 
 	u32 idx					= state.GetValue < u32 >( 2, 1 ) - 1;
 
-	fprintf(stderr, "STUB: %s idx = %u, %u more args\n",
-		__PRETTY_FUNCTION__, (unsigned)idx, lua_gettop(L)-2);
+	if ( idx < self->mUniforms.Size ()) {
+
+		MOAIShaderUniform& uniform = self->mUniforms [ idx ];
+
+		float m[16];
+		int n = lua_gettop(L)-2;
+
+		if (n < 1 || n > 16)
+			return 0;
+
+		for (int i = 0; i<n; i++)
+			m[i] = state.GetValue < float >( 3+i, 1.0f );
+
+		if (n == 1)
+			uniform.SetValue ( m[0] );
+		else
+			uniform.SetBuffer( m, n * sizeof ( m[0] ));
+		uniform.Bind();
+	}
 
 	return 0;
 }
@@ -846,6 +898,10 @@ void MOAIShader::RegisterLuaClass ( MOAILuaState& state ) {
 	state.SetField ( -1, "UNIFORM_WORLD",				( u32 )MOAIShaderUniform::UNIFORM_WORLD );
 	state.SetField ( -1, "UNIFORM_WORLD_VIEW",		    ( u32 )MOAIShaderUniform::UNIFORM_WORLD_VIEW );
 	state.SetField ( -1, "UNIFORM_WORLD_VIEW_PROJ",		( u32 )MOAIShaderUniform::UNIFORM_WORLD_VIEW_PROJ );
+	state.SetField ( -1, "UNIFORM_VEC4",				( u32 )MOAIShaderUniform::UNIFORM_VEC4 );
+	state.SetField ( -1, "UNIFORM_VEC3",				( u32 )MOAIShaderUniform::UNIFORM_VEC3 );
+	state.SetField ( -1, "UNIFORM_VEC2",				( u32 )MOAIShaderUniform::UNIFORM_VEC2 );
+	state.SetField ( -1, "UNIFORM_MATRIX",				( u32 )MOAIShaderUniform::UNIFORM_MATRIX );
 }
 
 //----------------------------------------------------------------//
