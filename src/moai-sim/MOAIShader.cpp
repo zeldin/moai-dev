@@ -229,24 +229,21 @@ void MOAIShaderUniform::SetType ( u32 type ) {
 
 			this->mBuffer.Init ( 4 );
 
-			float m [ 4 ] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			this->SetBuffer ( m, sizeof ( m ));
+			this->SetValue(USVec4D( 1.0f, 1.0f, 1.0f, 1.0f ));
 			break;
 		}
 		case UNIFORM_VEC3: {
 
 			this->mBuffer.Init ( 3 );
 
-			float m [ 3 ] = { 1.0f, 1.0f, 1.0f };
-			this->SetBuffer ( m, sizeof ( m ));
+			this->SetValue(ZLVec3D( 1.0f, 1.0f, 1.0f ));
 			break;
 		}
 		case UNIFORM_VEC2: {
 
 			this->mBuffer.Init ( 2 );
 
-			float m [ 2 ] = { 1.0f, 1.0f };
-			this->SetBuffer ( m, sizeof ( m ));
+			this->SetValue(USVec2D(1.0f, 1.0f ));
 			break;
 		}
 		case UNIFORM_VIEW_PROJ:
@@ -312,6 +309,18 @@ void MOAIShaderUniform::SetValue ( const MOAIAttrOp& attrOp ) {
 			if ( affine ) {
 				this->SetValue ( *affine );
 			}
+			break;
+		}
+		case UNIFORM_VEC4: {
+			this->SetValue (attrOp.GetValue(USVec4D(1.0f, 1.0f, 1.0f, 1.0f)));
+			break;
+		}
+		case UNIFORM_VEC3: {
+			this->SetValue (attrOp.GetValue(ZLVec3D(1.0f, 1.0f, 1.0f)));
+			break;
+		}
+		case UNIFORM_VEC2: {
+			this->SetValue (attrOp.GetValue(USVec2D(1.0f, 1.0f)));
 			break;
 		}
 	}
@@ -383,6 +392,42 @@ void MOAIShaderUniform::SetValue ( const ZLMatrix4x4& value ) {
 	m [ 14 ]	= value.m [ ZLMatrix4x4::C2_R3 ];
 	m [ 15 ]	= value.m [ ZLMatrix4x4::C3_R3 ];
 	
+	this->SetBuffer ( m, sizeof ( m ));
+}
+
+//----------------------------------------------------------------//
+void MOAIShaderUniform::SetValue ( const USVec4D& value ) {
+
+	float m [ 4 ];
+
+	m [ 0 ]		= value.mX;
+	m [ 1 ]		= value.mY;
+	m [ 2 ]		= value.mZ;
+	m [ 3 ]		= value.mW;
+
+	this->SetBuffer ( m, sizeof ( m ));
+}
+
+//----------------------------------------------------------------//
+void MOAIShaderUniform::SetValue ( const ZLVec3D& value ) {
+
+	float m [ 3 ];
+
+	m [ 0 ]		= value.mX;
+	m [ 1 ]		= value.mY;
+	m [ 2 ]		= value.mZ;
+
+	this->SetBuffer ( m, sizeof ( m ));
+}
+
+//----------------------------------------------------------------//
+void MOAIShaderUniform::SetValue ( const USVec2D& value ) {
+
+	float m [ 2 ];
+
+	m [ 0 ]		= value.mX;
+	m [ 1 ]		= value.mY;
+
 	this->SetBuffer ( m, sizeof ( m ));
 }
 

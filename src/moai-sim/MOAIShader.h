@@ -6,6 +6,9 @@
 
 #include <moai-sim/MOAIGfxResource.h>
 #include <moai-sim/MOAINode.h>
+#include <zl-util/ZLVec4D.h>
+#include <zl-util/ZLVec3D.h>
+#include <zl-util/ZLVec2D.h>
 
 class MOAIColor;
 class MOAITransformBase;
@@ -52,6 +55,9 @@ private:
 	void		SetValue					( const ZLColorVec& value );
 	void		SetValue					( const ZLAffine3D& value );
 	void		SetValue					( const ZLMatrix4x4& value );
+	void		SetValue					( const USVec4D& value );
+	void		SetValue					( const ZLVec3D& value );
+	void		SetValue					( const USVec2D& value );
 
 public:
 
