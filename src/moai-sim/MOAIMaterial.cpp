@@ -1,11 +1,18 @@
 #include "pch.h"
 #include <moai-sim/MOAIMaterial.h>
+#include <moai-sim/MOAIGfxDevice.h>
+#include <moai-sim/MOAIShader.h>
 
 //----------------------------------------------------------------//
 
 int MOAIMaterial::_setShader		( lua_State* L ) {
-  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
-  return 0;
+
+	MOAI_LUA_SETUP ( MOAIMaterial, "U" )
+
+	MOAIShader* shader = state.GetLuaObject < MOAIShader >( 2, true );
+	self->SetDependentMember < MOAIShader >( self->mShader, shader );
+
+	return 0;
 }
 
 int MOAIMaterial::_setShaderValue		( lua_State* L ) {
@@ -44,8 +51,28 @@ int MOAIMaterial::_setDepthWrite		( lua_State* L ) {
 }
 
 int MOAIMaterial::_setBlendMode		( lua_State* L ) {
-  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
-  return 0;
+	MOAI_LUA_SETUP ( MOAIMaterial, "U" )
+
+	if ( state.IsType ( 2, LUA_TNUMBER )) {
+		if ( state.IsType ( 3, LUA_TNUMBER )) {
+
+			u32 srcFactor = state.GetValue < u32 >( 2, 0 );
+			u32 dstFactor = state.GetValue < u32 >( 3, 0 );
+			self->mBlendMode.SetBlend ( srcFactor, dstFactor );
+		}
+		else {
+
+			u32 blendMode = state.GetValue < u32 >( 2, MOAIBlendMode::BLEND_NORMAL );
+			self->mBlendMode.SetBlend ( blendMode );
+		}
+	}
+	else {
+		self->mBlendMode.SetBlend ( MOAIBlendMode::BLEND_NORMAL );
+	}
+
+	self->ScheduleUpdate ();
+
+	return 0;
 }
 
 int MOAIMaterial::_clearShaderValues	( lua_State* L ) {
@@ -83,6 +110,7 @@ MOAIMaterial::MOAIMaterial () {
 
 //----------------------------------------------------------------//
 MOAIMaterial::~MOAIMaterial () {
+	this->mShader.Set ( *this, 0 );
 }
 
 //----------------------------------------------------------------//
@@ -128,4 +156,10 @@ void MOAIMaterial::RegisterLuaFuncs ( MOAILuaState& state ) {
 //----------------------------------------------------------------//
 void MOAIMaterial::LoadGfxState()
 {
+	MOAIGfxDevice& gfxDevice = MOAIGfxDevice::Get ();
+
+	if (this->mShader)
+		gfxDevice.SetShader(this->mShader);
+
+	gfxDevice.SetBlendMode ( this->mBlendMode );
 }

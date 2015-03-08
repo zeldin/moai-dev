@@ -2,10 +2,14 @@
 #define	MOAIMATERIAL_H
 
 #include <moai-sim/MOAINode.h>
+#include <moai-sim/MOAIBlendMode.h>
+class MOAIShader;
 
 class MOAIMaterial :
 	public virtual MOAINode {
 protected:
+	MOAILuaSharedPtr < MOAIShader >			mShader;
+	MOAIBlendMode							mBlendMode;
 	//----------------------------------------------------------------//
 	static int		_setShader		( lua_State* L );
 	static int		_setShaderValue		( lua_State* L );
