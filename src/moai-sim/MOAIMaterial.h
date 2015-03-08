@@ -43,6 +43,9 @@ public:
 	~MOAIMaterial				();
 	void	RegisterLuaClass		( MOAILuaState& state );
 	void	RegisterLuaFuncs		( MOAILuaState& state );
+
+	//----------------------------------------------------------------//
+	void	LoadGfxState	();
 };
 
 #endif

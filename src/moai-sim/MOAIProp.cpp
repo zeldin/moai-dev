@@ -9,6 +9,7 @@
 #include <moai-sim/MOAIGfxDevice.h>
 #include <moai-sim/MOAIGrid.h>
 #include <moai-sim/MOAILayoutFrame.h>
+#include <moai-sim/MOAIMaterial.h>
 #include <moai-sim/MOAIPartition.h>
 #include <moai-sim/MOAIPartitionResultBuffer.h>
 #include <moai-sim/MOAIProp.h>
@@ -679,7 +680,8 @@ int MOAIProp::_setTexture ( lua_State* L ) {
 int MOAIProp::_setMaterial ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIProp, "U" )
 
-	fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+	MOAIMaterial* material = state.GetLuaObject < MOAIMaterial >( 2, true );
+	self->SetDependentMember < MOAIMaterial >( self->mMaterial, material );
 
 	return 0;
 }
@@ -1097,6 +1099,10 @@ void MOAIProp::LoadGfxState () {
 	else {
 		gfxDevice.SetScissorRect ();
 	}
+
+	if ( this->mMaterial ) {
+		this->mMaterial->LoadGfxState ();
+	}
 }
 
 //----------------------------------------------------------------//
@@ -1136,6 +1142,7 @@ MOAIProp::~MOAIProp () {
 	this->mGrid.Set ( *this, 0 );
 	this->mShader.Set ( *this, 0 );
 	this->mTexture.Set ( *this, 0 );
+	this->mMaterial.Set ( *this, 0 );
 	this->mUVTransform.Set ( *this, 0 );
 	this->mScissorRect.Set ( *this, 0 );
 }

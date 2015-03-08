@@ -124,3 +124,8 @@ void MOAIMaterial::RegisterLuaFuncs ( MOAILuaState& state ) {
 	luaL_register ( state, 0, regTable );
 }
 
+
+//----------------------------------------------------------------//
+void MOAIMaterial::LoadGfxState()
+{
+}

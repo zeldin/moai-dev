@@ -17,6 +17,7 @@ class MOAIDeckRemapper;
 class MOAIGfxState;
 class MOAIGrid;
 class MOAILayoutFrame;
+class MOAIMaterial;
 class MOAIOverlapPrim2D;
 class MOAIPartition;
 class MOAIPartitionCell;
@@ -149,6 +150,7 @@ protected:
 	// TODO: these should all be attributes
 	MOAILuaSharedPtr < MOAIShader >			mShader;
 	MOAILuaSharedPtr < MOAIGfxState >		mTexture;
+	MOAILuaSharedPtr < MOAIMaterial >       mMaterial;
 	MOAILuaSharedPtr < MOAITransformBase >	mUVTransform;
 	MOAILuaSharedPtr < MOAIScissorRect >	mScissorRect;
 	
