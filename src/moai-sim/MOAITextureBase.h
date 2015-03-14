@@ -69,6 +69,7 @@ protected:
 	//----------------------------------------------------------------//
 	void			CreateTextureFromImage	( MOAIImage& image );
 	void			CreateTextureFromPVR	( void* data, size_t size );
+	void			CreateTextureFromDDS	( void* data, size_t size );
 	bool			IsRenewable				();
 	void			OnBind					();
 	void			OnClear					();

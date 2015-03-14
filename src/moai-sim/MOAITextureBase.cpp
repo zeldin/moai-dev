@@ -2,6 +2,7 @@
 // http://getmoai.com
 
 #include "pch.h"
+#include <moai-sim/MOAIDdsHeader.h>
 #include <moai-sim/MOAIFrameBufferTexture.h>
 #include <moai-sim/MOAIGfxDevice.h>
 #include <moai-sim/MOAIImage.h>
@@ -374,6 +375,72 @@ void MOAITextureBase::CreateTextureFromPVR ( void* data, size_t size ) {
 		}
 
 	#endif
+}
+
+//----------------------------------------------------------------//
+void MOAITextureBase::CreateTextureFromDDS ( void* data, size_t size ) {
+	UNUSED ( data );
+	UNUSED ( size );
+
+	if ( !MOAIGfxDevice::Get ().GetHasContext ()) return;
+	MOAIGfxDevice::Get ().ClearErrors ();
+
+	MOAIDdsHeader* header = MOAIDdsHeader::GetHeader ( data, size );
+	if ( !header ) return;
+
+	int bytesPerBlock = 0;
+	switch ( header->GetFourCC() ) {
+
+		case MOAIDdsHeader::D3DFMT_DXT1:
+			this->mGLInternalFormat = ZGL_PIXEL_TYPE_COMPRESSED_RGBA_S3TC_DXT1;
+			bytesPerBlock = 8;
+			break;
+		case MOAIDdsHeader::D3DFMT_DXT3:
+			this->mGLInternalFormat = ZGL_PIXEL_TYPE_COMPRESSED_RGBA_S3TC_DXT3;
+			bytesPerBlock = 16;
+			break;
+		case MOAIDdsHeader::D3DFMT_DXT5:
+			this->mGLInternalFormat = ZGL_PIXEL_TYPE_COMPRESSED_RGBA_S3TC_DXT5;
+			bytesPerBlock = 16;
+			break;
+		default:
+			fprintf(stderr, "DDS: Unsupported texture pixeltype\n");
+			return;
+	}
+
+	this->mGLTexID = zglCreateTexture ();
+	if ( !this->mGLTexID ) return;
+
+	zglBindTexture ( this->mGLTexID );
+
+	this->mTextureSize = 0;
+
+	int width = header->dwWidth;
+	int height = header->dwHeight;
+	char* imageData = (char*)(header->GetFileData ( data, size));
+	int levels = header->GetMipMapCount();
+
+	for ( int level = 0; level < levels; ++level ) {
+		u32 currentSize = ((width+3) >> 2) * ((height+3) >> 2) * bytesPerBlock;
+
+		zglCompressedTexImage2D ( level, this->mGLInternalFormat, width, height, currentSize, imageData );
+
+		if ( zglGetError () != ZGL_ERROR_NONE ) {
+			this->Clear ();
+			return;
+		}
+
+		imageData += currentSize;
+		this->mTextureSize += currentSize;
+
+		width = (width + 1) >> 1;
+		height = (height + 1) >> 1;
+	}
+
+	if ( this->mGLTexID ) {
+		MOAIGfxDevice::Get ().ReportTextureAlloc ( this->mDebugName, this->mTextureSize );
+		this->mIsDirty = true;
+	}
 }
 
 //----------------------------------------------------------------//

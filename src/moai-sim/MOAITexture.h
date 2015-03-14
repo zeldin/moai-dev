@@ -29,6 +29,7 @@ private:
 	// for loading compressed data
 	void*				mData;
 	size_t				mDataSize;
+	bool				mDataIsDds;
 
 	//----------------------------------------------------------------//
 	static int			_load					( lua_State* L );
