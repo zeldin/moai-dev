@@ -4,12 +4,20 @@
 #include <moai-sim/MOAINode.h>
 #include <moai-sim/MOAIBlendMode.h>
 class MOAIShader;
+class MOAITextureBase;
+class MOAIMultiTexture;
 
 class MOAIMaterial :
 	public virtual MOAINode {
 protected:
 	MOAILuaSharedPtr < MOAIShader >			mShader;
 	MOAIBlendMode							mBlendMode;
+	typedef STLMap < u32, MOAIAttrOp >::iterator ShaderValuesIt;
+	STLMap < u32, MOAIAttrOp > mShaderValues;
+	MOAILuaSharedPtr < MOAIMultiTexture > mMultiTexture;
+	u32 mTexturesUsed;
+
+	std::map<u32,MOAIAttrOp> m_ShaderValues;
 	//----------------------------------------------------------------//
 	static int		_setShader		( lua_State* L );
 	static int		_setShaderValue		( lua_State* L );
@@ -28,6 +36,7 @@ protected:
 	//----------------------------------------------------------------//
 
 	enum {
+	  VALUETYPE_NONE,
 	  VALUETYPE_TEXTURE = 100,
 	  VALUETYPE_FLOAT,
 	  VALUETYPE_VEC2,

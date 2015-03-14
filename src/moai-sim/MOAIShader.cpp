@@ -755,6 +755,14 @@ void MOAIShader::DeclareUniform ( u32 idx, cc8* name, u32 type, int value ) {
 }
 
 //----------------------------------------------------------------//
+int MOAIShader::GetIndexForUniform ( cc8 *name ) {
+	for ( u32 i = 0; i < this->mUniforms.Size (); ++i ) {
+		if (this->mUniforms [ i ].mName == name)
+			return i;
+	}
+	return -1;
+}
+//----------------------------------------------------------------//
 bool MOAIShader::IsRenewable () {
 
 	return true;
