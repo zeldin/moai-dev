@@ -69,7 +69,7 @@ void MOAIJoystickSensor::HandleEvent ( ZLStream& eventStream ) {
 }
 
 //----------------------------------------------------------------//
-MOAIJoystickSensor::MOAIJoystickSensor () {
+MOAIJoystickSensor::MOAIJoystickSensor () : mX(0), mY(0) {
 
 	RTTI_SINGLE ( MOAISensor )
 }
