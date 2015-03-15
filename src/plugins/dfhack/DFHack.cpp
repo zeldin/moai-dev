@@ -5,6 +5,8 @@
 
 #include <dfhack/DFHack.h>
 
+#include <fts.h>
+
 //----------------------------------------------------------------//
 
 STLString DFHack::BuildLocalDocumentFilename( MOAILuaState &state, int idx )
@@ -29,25 +31,6 @@ STLString DFHack::BuildLocalDocumentFilename( MOAILuaState &state, int idx )
       state.Pop(1);
   }
   return p;
-}
-
-//----------------------------------------------------------------//
-
-int DFHack::ftWalk(const char *fpath, const struct stat *sb, int typeflag)
-{
-  if (fpath[0] == '.' && fpath[1] == '/')
-    fpath += 2;
-  if (fpath[0] == '.' && fpath[1] == 0)
-    return 0;
-  if (typeflag == FTW_F) {
-    MOAIScopedLuaState state = MOAILuaRuntime::Get ().State ();
-    STLString lpath = fpath;
-    lpath.to_lower();
-    lua_pushstring(state, lpath);
-    lua_pushstring(state, fpath);
-    lua_settable(state, -3);
-  }
-  return 0;
 }
 
 //----------------------------------------------------------------//
@@ -131,7 +114,27 @@ int DFHack::_getStorageListing ( lua_State* L )
   lua_newtable(state);
   STLString oldCwd = ZLFileSys::GetCurrentPath();
   ZLFileSys::SetCurrentPath(BuildLocalDocumentFilename(state, -2));
-  ftw(".", ftWalk, 16);
+  char path[] = { '.', 0 };
+  char * const paths[] = { path,  NULL };
+  FTS *fts = fts_open(paths, 0, NULL);
+  FTSENT *ent;
+  while ((ent = fts_read(fts)) != NULL) {
+    if (ent->fts_info == FTS_F) {
+      char *fpath = ent->fts_path;
+      if (fpath[0] == '.' && fpath[1] == 0)
+	fpath ++;
+      else if (fpath[0] == '.' && fpath[1] == '/')
+	fpath += 2;
+      if (fpath[0] != 0) {
+	STLString lpath = fpath;
+	lpath.to_lower();
+	lua_pushstring(state, lpath);
+	lua_pushstring(state, fpath);
+	lua_settable(state, -3);
+      }
+    }
+  }
+  fts_close(fts);
   ZLFileSys::SetCurrentPath(oldCwd);
   return 1;
 }
