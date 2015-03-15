@@ -52,6 +52,22 @@ int DFHack::ftWalk(const char *fpath, const struct stat *sb, int typeflag)
 
 //----------------------------------------------------------------//
 
+int DFHack::_hasData ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "S" )) return 0;
+  STLString path = BuildLocalDocumentFilename(state, 1);
+  bool localOnly = state.GetValue < bool >( 2, false );
+
+  bool result = ZLFileSys::CheckFileExists ( path, true );
+
+  lua_pushboolean ( state, result );
+
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
 int DFHack::_loadFromInstructionStream ( lua_State* L )
 {
   MOAILuaState state ( L );
@@ -163,6 +179,7 @@ void DFHack::RegisterLuaClass ( MOAILuaState& state )
   lua_setfield(state, -2, "ops");
 
   luaL_Reg regTable [] = {
+    { "hasData",   _hasData },
     { "loadFromInstructionStream",   _loadFromInstructionStream },
     { "saveInstructionStream",   _saveInstructionStream },
     { "getStorageListing",  _getStorageListing },

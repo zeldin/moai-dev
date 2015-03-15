@@ -10,6 +10,7 @@ class DFHack :
 private:
 	  static STLString BuildLocalDocumentFilename( MOAILuaState &state, int idx );
 	  static int ftWalk(const char *fpath, const struct stat *sb, int typeflag);
+	  static int	_hasData ( lua_State* L );
 	  static int	_loadFromInstructionStream ( lua_State* L );
 	  static int	_saveInstructionStream ( lua_State* L );
 	  static int	_getStorageListing ( lua_State* L );
