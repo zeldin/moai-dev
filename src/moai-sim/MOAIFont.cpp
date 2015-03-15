@@ -313,6 +313,18 @@ int MOAIFont::_setReader ( lua_State* L ) {
 	return 0;
 }
 
+//----------------------------------------------------------------//
+/**	@name	setUVOffsets
+*/
+int MOAIFont::_setUVOffsets ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIFont, "UNN" )
+	float u = state.GetValue < float >( 2, 0.0 );
+	float v = state.GetValue < float >( 3, 0.0 );
+	fprintf(stderr, "STUB: %s u=%g v=%g\n", __PRETTY_FUNCTION__,
+		(double)u, (double)v);
+	return 0;
+}
+
 //================================================================//
 // DOXYGEN
 //================================================================//
@@ -681,6 +693,7 @@ void MOAIFont::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setFlags",					_setFlags },
 		{ "setImage",					_setImage },
 		{ "setReader",					_setReader },
+		{ "setUVOffsets",				_setUVOffsets },
 		{ NULL, NULL }
 	};
 	

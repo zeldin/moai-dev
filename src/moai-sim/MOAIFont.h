@@ -91,6 +91,7 @@ protected:
 	static int			_setFlags				( lua_State* L );
 	static int			_setImage				( lua_State* L );
 	static int			_setReader				( lua_State* L );
+	static int			_setUVOffsets				( lua_State* L );
 
 	//----------------------------------------------------------------//
 	#ifdef DOXYGEN
