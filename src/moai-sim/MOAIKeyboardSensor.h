@@ -5,41 +5,7 @@
 #define MOAIKEYBOARDSENSOR_H
 
 #include <moai-sim/MOAISensor.h>
-
-//================================================================//
-// MOAIKeyCodes
-//================================================================//
-namespace MOAIKeyCodes {
-	enum {
-		SHIFT	= 256,
-		CONTROL,
-		ALT,
-
-		UP      = 273,
-		DOWN,
-		RIGHT,
-		LEFT,
-		INSERT,
-		HOME,
-		END,
-		PAGE_UP,
-		PAGE_DOWN,
-		F1,
-		F2,
-		F3,
-		F4,
-		F5,
-		F6,
-		F7,
-		F8,
-		F9,
-		F10,
-		F11,
-		F12,
-
-		TOTAL   = 512,
-	};
-};
+#include <moai-sim/MOAIKeyCodes.h>
 
 //================================================================//
 // MOAIKeyboardSensor

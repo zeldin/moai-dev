@@ -8,6 +8,7 @@
 #include <moai-core/host.h>
 #include <host-modules/aku_modules.h>
 #include <host-sdl/SDLHost.h>
+#include <moai-sim/MOAIKeyCodes.h>
 
 #include <SDL.h>
 
@@ -87,6 +88,7 @@ void _AKUOpenWindowFunc ( const char* title, int width, int height ) {
 
 static void	Finalize			();
 static void	Init				( int argc, char** argv );
+static int	RemapScancode			( int key );
 static void	MainLoop			();
 static void	PrintMoaiVersion	();
 
@@ -154,6 +156,34 @@ void Init ( int argc, char** argv ) {
 }
 
 //----------------------------------------------------------------//
+int RemapScancode (int key) {
+	switch (key) {
+	case SDL_SCANCODE_F1: return MOAIKeyCodes::F1;
+	case SDL_SCANCODE_F2: return MOAIKeyCodes::F2;
+	case SDL_SCANCODE_F3: return MOAIKeyCodes::F3;
+	case SDL_SCANCODE_F4: return MOAIKeyCodes::F4;
+	case SDL_SCANCODE_F5: return MOAIKeyCodes::F5;
+	case SDL_SCANCODE_F6: return MOAIKeyCodes::F6;
+	case SDL_SCANCODE_F7: return MOAIKeyCodes::F7;
+	case SDL_SCANCODE_F8: return MOAIKeyCodes::F8;
+	case SDL_SCANCODE_F9: return MOAIKeyCodes::F9;
+	case SDL_SCANCODE_F10: return MOAIKeyCodes::F10;
+	case SDL_SCANCODE_F11: return MOAIKeyCodes::F11;
+	case SDL_SCANCODE_F12: return MOAIKeyCodes::F12;
+	case SDL_SCANCODE_LEFT: return MOAIKeyCodes::LEFT;
+	case SDL_SCANCODE_UP: return MOAIKeyCodes::UP;
+	case SDL_SCANCODE_RIGHT: return MOAIKeyCodes::RIGHT;
+	case SDL_SCANCODE_DOWN: return MOAIKeyCodes::DOWN;
+	case SDL_SCANCODE_PAGEUP: return MOAIKeyCodes::PAGE_UP;
+	case SDL_SCANCODE_PAGEDOWN: return MOAIKeyCodes::PAGE_DOWN;
+	case SDL_SCANCODE_HOME: return MOAIKeyCodes::HOME;
+	case SDL_SCANCODE_END: return MOAIKeyCodes::END;
+	case SDL_SCANCODE_INSERT: return MOAIKeyCodes::INSERT;
+	}
+	return 0;
+}
+
+//----------------------------------------------------------------//
 void MainLoop () {
 
 	Uint32 lastFrame = SDL_GetTicks();
@@ -175,9 +205,10 @@ void MainLoop () {
 				case SDL_KEYDOWN:
 				case SDL_KEYUP:	{
 					int key = sdlEvent.key.keysym.sym;
-					if (key & 0x40000000) key = (key & 0x3FFFFFFF) + 256;
-			
-					AKUEnqueueKeyboardEvent ( InputDeviceID::DEVICE, InputSensorID::KEYBOARD, key, sdlEvent.key.type == SDL_KEYDOWN );
+					if (key & 0x40000000) key = RemapScancode (key & 0x3FFFFFFF);
+
+					if (key > 0 && key < MOAIKeyCodes::TOTAL)
+						AKUEnqueueKeyboardEvent ( InputDeviceID::DEVICE, InputSensorID::KEYBOARD, key, sdlEvent.key.type == SDL_KEYDOWN );
 
 				} 	break;
 					
