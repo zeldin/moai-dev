@@ -137,6 +137,7 @@ private:
 	static int		_setTimerError				( lua_State* L );
 	static int		_setTraceback				( lua_State* L );
 	static int		_timeToFrames				( lua_State* L );
+	static int		_exit					( lua_State* L );
 
 	//----------------------------------------------------------------//
 	#ifdef DOXYGEN

@@ -663,6 +663,12 @@ int MOAISim::_timeToFrames ( lua_State* L ) {
 	return 1;
 }
 
+//----------------------------------------------------------------//
+int MOAISim::_exit ( lua_State* L ) {
+	exit(0);
+	return 0;
+}
+
 //================================================================//
 // DOXYGEN
 //================================================================//
@@ -865,6 +871,7 @@ void MOAISim::RegisterLuaClass ( MOAILuaState& state ) {
 		{ "setTraceback",				_setTraceback },
 		{ "showCursor",					_showCursor },
 		{ "timeToFrames",				_timeToFrames },
+		{ "exit",				_exit },
 		{ NULL, NULL }
 	};
 
