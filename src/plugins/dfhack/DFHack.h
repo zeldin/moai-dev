@@ -12,6 +12,7 @@ private:
 	  static int	_saveInstructionStream ( lua_State* L );
 	  static int	_getStorageListing ( lua_State* L );
 	  static int	_beginSubscriptionUpdate ( lua_State* L );
+	  static int	_setTimeDilation ( lua_State* L );
 public:
 	  DECL_LUA_SINGLETON ( DFHack )
 

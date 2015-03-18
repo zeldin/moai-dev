@@ -150,6 +150,17 @@ int DFHack::_beginSubscriptionUpdate ( lua_State* L )
 
 //----------------------------------------------------------------//
 
+int DFHack::_setTimeDilation ( lua_State* L )
+{
+  MOAILuaState state ( L );
+
+  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+
+  return 0;
+}
+
+//----------------------------------------------------------------//
+
 DFHack::DFHack ()
 {
   RTTI_BEGIN
@@ -187,6 +198,7 @@ void DFHack::RegisterLuaClass ( MOAILuaState& state )
     { "saveInstructionStream",   _saveInstructionStream },
     { "getStorageListing",  _getStorageListing },
     { "beginSubscriptionUpdate",  _beginSubscriptionUpdate },
+    { "setTimeDilation",  _setTimeDilation },
     { NULL, NULL }
   };
   luaL_register ( state, 0, regTable );
