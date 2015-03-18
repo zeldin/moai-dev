@@ -29,7 +29,11 @@ private:
 	static int	_destroy				( lua_State* L );
 	static int	_getBody				( lua_State* L );
 	static int  _getFilter				( lua_State* L );
+	static int	_setBoldEdgeIndex	( lua_State* L );
+	static int	_setBoldVertexIndex	( lua_State* L );
 	static int	_setCollisionHandler	( lua_State* L );
+	static int	_setDebugColor		( lua_State* L );
+	static int	_setDebugPenWidth	( lua_State* L );
 	static int	_setDensity				( lua_State* L );
 	static int	_setFilter				( lua_State* L );
 	static int	_setFriction			( lua_State* L );

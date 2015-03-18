@@ -75,6 +75,34 @@ int MOAIBox2DFixture::_getFilter ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+
+int MOAIBox2DFixture::_setBoldEdgeIndex ( lua_State* L ) {
+  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+  return 0;
+}
+
+//----------------------------------------------------------------//
+
+int MOAIBox2DFixture::_setBoldVertexIndex ( lua_State* L ) {
+  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+  return 0;
+}
+
+//----------------------------------------------------------------//
+
+int MOAIBox2DFixture::_setDebugColor ( lua_State* L ) {
+  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+  return 0;
+}
+
+//----------------------------------------------------------------//
+
+int MOAIBox2DFixture::_setDebugPenWidth ( lua_State* L ) {
+  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+  return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	setCollisionHandler
 	@text	Sets a Lua function to call when collisions occur. The handler should
 			accept the following parameters: ( phase, fixtureA, fixtureB, arbiter ). 'phase' will
@@ -309,7 +337,11 @@ void MOAIBox2DFixture::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "destroy",				_destroy },
 		{ "getBody",				_getBody },
 		{ "getFilter",				_getFilter},
+		{ "setBoldEdgeIndex",		_setBoldEdgeIndex},
+		{ "setBoldVertexIndex",		_setBoldVertexIndex},
 		{ "setCollisionHandler",	_setCollisionHandler },
+		{ "setDebugColor",		_setDebugColor},
+		{ "setDebugPenWidth",		_setDebugPenWidth},
 		{ "setDensity",				_setDensity },
 		{ "setFilter",				_setFilter },
 		{ "setFriction",			_setFriction },
