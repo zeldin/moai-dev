@@ -3,9 +3,12 @@
 
 #include <moai-sim/headers.h>
 
+class MOAIFmodMicrophone;
+
 class MOAIFmodEventMgr :
 	public MOAIGlobalClass < MOAIFmodEventMgr, MOAILuaObject > {
 private:
+	MOAIFmodMicrophone*                         mMic;
 
 	//----------------------------------------------------------------//
 	static int	_getMemoryStats		        ( lua_State* L );
@@ -50,6 +53,7 @@ public:
 	virtual			                ~MOAIFmodEventMgr	();
     void			                RegisterLuaClass	( MOAILuaState& state );
     void                            RegisterLuaFuncs	( MOAILuaState& state );
+    MOAIFmodMicrophone*		        AffirmMic			();
 
 };
 

@@ -1,4 +1,6 @@
 #include <dfhack/MOAIFmodEventMgr.h>
+#include <dfhack/MOAIFmodEventInstance.h>
+#include <dfhack/MOAIFmodMicrophone.h>
 
 //================================================================//
 // local
@@ -50,14 +52,20 @@ int	MOAIFmodEventMgr::_pauseSoundCategory ( lua_State* L ) {
 
 int	MOAIFmodEventMgr::_playEvent3D ( lua_State* L ) {
   fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
-  return 0;
+  MOAILuaState state ( L );
+  MOAIFmodEventInstance* pEventInstance = new MOAIFmodEventInstance();
+  pEventInstance->PushLuaUserdata ( state );
+  return 1;
 }
 
 //----------------------------------------------------------------//
 
 int	MOAIFmodEventMgr::_playEvent2D ( lua_State* L ) {
   fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
-  return 0;
+  MOAILuaState state ( L );
+  MOAIFmodEventInstance* pEventInstance = new MOAIFmodEventInstance();
+  pEventInstance->PushLuaUserdata ( state );
+  return 1;
 }
 
 //----------------------------------------------------------------//
@@ -77,8 +85,12 @@ int	MOAIFmodEventMgr::_stopAllEvents ( lua_State* L ) {
 //----------------------------------------------------------------//
 
 int	MOAIFmodEventMgr::_getMicrophone ( lua_State* L ) {
-  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
-  return 0;
+    MOAILuaState state ( L );
+
+    MOAIFmodMicrophone* pMic = MOAIFmodEventMgr::Get().AffirmMic();
+    pMic->PushLuaUserdata ( state );
+
+    return 1;
 }
 
 //----------------------------------------------------------------//
@@ -134,12 +146,22 @@ int	MOAIFmodEventMgr::_setGlobalPitch ( lua_State* L ) {
 // MOAIFmodEventMgr
 //================================================================//
 
-MOAIFmodEventMgr::MOAIFmodEventMgr () {
+MOAIFmodEventMgr::MOAIFmodEventMgr () : mMic ( 0 ) {
     RTTI_SINGLE ( MOAIFmodEventMgr )
 }
 
 //----------------------------------------------------------------//
 MOAIFmodEventMgr::~MOAIFmodEventMgr () {
+}
+
+//----------------------------------------------------------------//
+MOAIFmodMicrophone* MOAIFmodEventMgr::AffirmMic () {
+
+    if ( !this->mMic ) {
+        this->mMic = new MOAIFmodMicrophone ();
+        this->LuaRetain ( this->mMic );
+    }
+    return this->mMic;
 }
 
 //----------------------------------------------------------------//
