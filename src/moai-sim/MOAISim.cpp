@@ -12,6 +12,8 @@
 #include <moai-sim/MOAITextureBase.h>
 #include <moai-sim/MOAIRenderMgr.h>
 
+#include <time.h>
+
 #if MOAI_WITH_LIBCURL
 	#include <moai-http-client/MOAIUrlMgrCurl.h>
 #endif
@@ -669,6 +671,22 @@ int MOAISim::_exit ( lua_State* L ) {
 	return 0;
 }
 
+//----------------------------------------------------------------//
+int MOAISim::_getDateTime ( lua_State* L ) {
+	MOAILuaState state ( L );
+	time_t t;
+	struct tm lt;
+	time(&t);
+	localtime_r(&t, &lt);
+	lua_pushnumber(state, lt.tm_mday);
+	lua_pushnumber(state, lt.tm_mon+1);
+	lua_pushnumber(state, lt.tm_year+1900);
+	lua_pushnumber(state, lt.tm_hour);
+	lua_pushnumber(state, lt.tm_min);
+	lua_pushnumber(state, lt.tm_sec);
+	return 6;
+}
+
 //================================================================//
 // DOXYGEN
 //================================================================//
@@ -872,6 +890,7 @@ void MOAISim::RegisterLuaClass ( MOAILuaState& state ) {
 		{ "showCursor",					_showCursor },
 		{ "timeToFrames",				_timeToFrames },
 		{ "exit",				_exit },
+		{ "getDateTime",			_getDateTime },
 		{ NULL, NULL }
 	};
 
