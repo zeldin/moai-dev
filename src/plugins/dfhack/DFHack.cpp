@@ -83,7 +83,7 @@ int DFHack::_loadFromInstructionStream ( lua_State* L )
 int DFHack::_saveInstructionStream ( lua_State* L )
 {
   MOAILuaState state ( L );
-  if ( !state.CheckParams ( 1, "STTNB" )) return 0;
+  if ( !state.CheckParams ( 1, "STTN" )) return 0;
   STLString path = BuildLocalDocumentFilename(state, 1);
   int registerCount = state.GetValue < s16 >( 4, 0 );
   bool storeLocal = state.GetValue < bool >( 5, false );
