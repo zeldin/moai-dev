@@ -159,7 +159,7 @@ public:
 	void			DeclareUniform			( u32 idx, cc8* name, u32 type );
 	void			DeclareUniform			( u32 idx, cc8* name, u32 type, float value );
 	void			DeclareUniform			( u32 idx, cc8* name, u32 type, int value );
-	int			GetIndexForUniform		( cc8 *name );
+	u32			GetAttrIdForUniform		( cc8 *name );
 	bool			IsValid					();
 	bool			LoadGfxState			();
 					MOAIShader				();

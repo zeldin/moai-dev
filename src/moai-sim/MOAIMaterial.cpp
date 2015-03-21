@@ -23,13 +23,13 @@ int MOAIMaterial::_setShaderValue		( lua_State* L ) {
 
 	STLString name		= state.GetValue < cc8* >( 2, "" );
 	u32  type			= state.GetValue < u32 >( 3, VALUETYPE_NONE );
-	int  idx = -1;
+	u32  idx = 0;
 
 	if (self->mShader) {
-		idx = self->mShader->GetIndexForUniform(name.str());
+		idx = self->mShader->GetAttrIdForUniform(name.str());
 	}
 
-	if (idx >= 0) {
+	if (idx > 0) {
 
 	  // Find previously bound texture, if any
 	  bool oldTexture = false;
