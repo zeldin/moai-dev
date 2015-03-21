@@ -13,6 +13,8 @@ private:
 	  static int	_getStorageListing ( lua_State* L );
 	  static int	_beginSubscriptionUpdate ( lua_State* L );
 	  static int	_setTimeDilation ( lua_State* L );
+	  static int	_registerThread ( lua_State* L );
+	  static int	_registerWrappedThread ( lua_State* L );
 public:
 	  DECL_LUA_SINGLETON ( DFHack )
 
