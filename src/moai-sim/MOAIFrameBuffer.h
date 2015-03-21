@@ -86,7 +86,7 @@ public:
 	
 	friend class MOAIGfxDevice;
 	
-	DECL_LUA_FACTORY ( MOAIFrameBuffer )
+	DECL_LUA_FACTORY_RENAME ( MOAIFrameBuffer, "MOAIFrameBufferBase" )
 	
 	GET			( u32, BufferWidth, mBufferWidth )
 	GET			( u32, BufferHeight, mBufferHeight )

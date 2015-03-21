@@ -43,7 +43,7 @@ public:
 	friend class MOAIGfxDevice;
 	friend class MOAITextureBase;
 	
-	DECL_LUA_FACTORY ( MOAIFrameBufferTexture )
+	DECL_LUA_FACTORY_RENAME ( MOAIFrameBufferTexture, "MOAIFrameBuffer" )
 	
 	//----------------------------------------------------------------//
 	void				Init						( u32 width, u32 height, u32 colorFormat, u32 depthFormat, u32 stencilFormat );
