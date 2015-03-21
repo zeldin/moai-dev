@@ -31,6 +31,14 @@ int MOAIFmodEventInstance::_setVolume ( lua_State* L ) {
 	return 0;
 }
 
+//----------------------------------------------------------------//
+int MOAIFmodEventInstance::_setParameter ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIFmodEventInstance, "USN" )
+
+  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
+
+	return 0;
+}
 
 //================================================================//
 // MOAIFmodEventInstance
@@ -63,6 +71,7 @@ void MOAIFmodEventInstance::RegisterLuaFuncs ( MOAILuaState& state ) {
 
 		{ "stop",			        _stop },
 		{ "setVolume",              _setVolume },
+        { "setParameter",           _setParameter },
 
 		{ NULL, NULL }
 	};

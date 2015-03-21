@@ -15,6 +15,7 @@ private:
 
     static int _stop                   ( lua_State* L );
     static int _setVolume			    ( lua_State* L );
+    static int	_setParameter		    ( lua_State* L );
 
 public:
 
