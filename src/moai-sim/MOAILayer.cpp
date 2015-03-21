@@ -242,6 +242,16 @@ int MOAILayer::_setCpSpace ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+int MOAILayer::_setFrameBuffer ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAILayer, "U" )
+
+	MOAIFrameBuffer* frameBuffer = state.GetLuaObject < MOAIFrameBuffer >( 2, true );
+	self->mFrameBuffer.Set ( *self, frameBuffer );
+
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	setParallax
 	@text	Sets the parallax scale for this layer. This is simply a
 			scalar applied to the view transform before rendering.
@@ -707,6 +717,7 @@ MOAILayer::~MOAILayer () {
 	this->mCamera.Set ( *this, 0 );
 	this->mViewport.Set ( *this, 0 );
 	this->mPartition.Set ( *this, 0 );
+	this->mFrameBuffer.Set ( *this, 0 );
 
 	#if MOAI_WITH_CHIPMUNK
 		this->mCpSpace.Set ( *this, 0 );
@@ -754,6 +765,7 @@ void MOAILayer::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setBox2DWorld",			_setBox2DWorld },
 		{ "setCamera",				_setCamera },
 		{ "setCpSpace",				_setCpSpace },
+		{ "setFrameBuffer",			_setFrameBuffer },
 		{ "setParallax",			_setParallax },
 		{ "setPartition",			_setPartition },
 		{ "setPartitionCull2D",		_setPartitionCull2D },
@@ -771,8 +783,15 @@ void MOAILayer::RegisterLuaFuncs ( MOAILuaState& state ) {
 
 //----------------------------------------------------------------//
 void MOAILayer::Render () {
-	
-	this->Draw ( MOAIProp::NO_SUBPRIM_ID );
+
+	if (mFrameBuffer) {
+		MOAIGfxDevice& gfxDevice = MOAIGfxDevice::Get ();
+		gfxDevice.SetFrameBuffer(mFrameBuffer);
+		this->Draw ( MOAIProp::NO_SUBPRIM_ID );
+		gfxDevice.SetFrameBuffer(0);
+	} else {
+		this->Draw ( MOAIProp::NO_SUBPRIM_ID );
+	}
 }
 
 //----------------------------------------------------------------//
