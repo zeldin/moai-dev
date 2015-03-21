@@ -36,7 +36,7 @@ int MOAIMaterial::_setShaderValue		( lua_State* L ) {
 	  int texid;
 	  ShaderValuesIt iter = self->mShaderValues.find(idx);
 	  if (iter != self->mShaderValues.end() &&
-	      (texid = (*iter).second.GetValue<int>(-1)) >= 0) {
+	      (texid = (*iter).second.GetValue<int>(0)-1) >= 0) {
 	    self->mTexturesUsed &= ~(1<<texid);
 	    oldTexture = true;
 	  }
@@ -54,7 +54,7 @@ int MOAIMaterial::_setShaderValue		( lua_State* L ) {
 		    break;
 		}
 	      self->mTexturesUsed |= (1<<texid);
-	      attrOp.SetValue<int>(texid);
+	      attrOp.SetValue<int>(texid+1);
 	      if (!self->mMultiTexture) {
 		self->mMultiTexture.Set (*self, new MOAIMultiTexture());
 		self->mMultiTexture->Reserve(4);
