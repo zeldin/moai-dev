@@ -116,8 +116,16 @@ int MOAIMaterial::_setDynamicShaderValue	( lua_State* L ) {
 }
 
 int MOAIMaterial::_setTexture		( lua_State* L ) {
-  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
-  return 0;
+	MOAI_LUA_SETUP ( MOAIMaterial, "U" )
+
+	MOAIGfxState* texture = MOAITexture::AffirmTexture ( state, 2 );
+	self->mTexture.Set ( *self, texture );
+
+	if ( texture ) {
+		self->mTexture->PushLuaUserdata ( state );
+		return 1;
+	}
+	return 0;
 }
 
 int MOAIMaterial::_setColor		( lua_State* L ) {
@@ -201,6 +209,7 @@ MOAIMaterial::MOAIMaterial () : mTexturesUsed(0) {
 //----------------------------------------------------------------//
 MOAIMaterial::~MOAIMaterial () {
 	this->mShader.Set ( *this, 0 );
+	this->mTexture.Set ( *this, 0 );
 	this->mMultiTexture.Set ( *this, 0 );
 }
 
@@ -259,6 +268,9 @@ void MOAIMaterial::LoadGfxState()
 		this->mShader->BindUniforms();
 		if (mMultiTexture)
 		  gfxDevice.SetTexture(mMultiTexture);
+	}
+	if (this->mTexture) {
+		gfxDevice.SetGfxState(mTexture);
 	}
 
 	gfxDevice.SetBlendMode ( this->mBlendMode );

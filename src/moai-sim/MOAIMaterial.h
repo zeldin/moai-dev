@@ -3,6 +3,7 @@
 
 #include <moai-sim/MOAINode.h>
 #include <moai-sim/MOAIBlendMode.h>
+class MOAIGfxState;
 class MOAIShader;
 class MOAITextureBase;
 class MOAIMultiTexture;
@@ -11,6 +12,7 @@ class MOAIMaterial :
 	public virtual MOAINode {
 protected:
 	MOAILuaSharedPtr < MOAIShader >			mShader;
+	MOAILuaSharedPtr < MOAIGfxState >		mTexture;
 	MOAIBlendMode							mBlendMode;
 	typedef STLMap < u32, MOAIAttrOp >::iterator ShaderValuesIt;
 	STLMap < u32, MOAIAttrOp > mShaderValues;
