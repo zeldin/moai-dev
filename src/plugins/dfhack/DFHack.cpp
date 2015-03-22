@@ -51,6 +51,22 @@ int DFHack::_hasData ( lua_State* L )
 
 //----------------------------------------------------------------//
 
+int DFHack::_deleteData ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "S" )) return 0;
+  STLString path = BuildLocalDocumentFilename(state, 1);
+  bool localOnly = state.GetValue < bool >( 2, false );
+
+  bool result = ZLFileSys::DeleteFile ( path );
+
+  lua_pushboolean ( state, result );
+
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
 int DFHack::_loadFromInstructionStream ( lua_State* L )
 {
   MOAILuaState state ( L );
@@ -216,6 +232,7 @@ void DFHack::RegisterLuaClass ( MOAILuaState& state )
 
   luaL_Reg regTable [] = {
     { "hasData",   _hasData },
+    { "deleteData",   _deleteData },
     { "loadFromInstructionStream",   _loadFromInstructionStream },
     { "saveInstructionStream",   _saveInstructionStream },
     { "getStorageListing",  _getStorageListing },

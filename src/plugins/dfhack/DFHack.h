@@ -8,6 +8,7 @@ class DFHack :
 private:
 	  static STLString BuildLocalDocumentFilename( MOAILuaState &state, int idx );
 	  static int	_hasData ( lua_State* L );
+	  static int	_deleteData ( lua_State* L );
 	  static int	_loadFromInstructionStream ( lua_State* L );
 	  static int	_saveInstructionStream ( lua_State* L );
 	  static int	_getStorageListing ( lua_State* L );
