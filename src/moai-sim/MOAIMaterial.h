@@ -18,8 +18,7 @@ protected:
 	STLMap < u32, MOAIAttrOp > mShaderValues;
 	MOAILuaSharedPtr < MOAIMultiTexture > mMultiTexture;
 	u32 mTexturesUsed;
-
-	std::map<u32,MOAIAttrOp> m_ShaderValues;
+	u32 mShaderSimTimeAttr;
 	//----------------------------------------------------------------//
 	static int		_setShader		( lua_State* L );
 	static int		_setShaderValue		( lua_State* L );
@@ -47,6 +46,7 @@ protected:
 	};
 
 	enum {
+	  DYNAMICVALUE_NONE,
 	  DYNAMICVALUE_SIMTIME = 200,
 	};
 

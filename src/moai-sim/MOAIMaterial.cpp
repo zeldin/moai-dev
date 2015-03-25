@@ -111,8 +111,20 @@ int MOAIMaterial::_setShaderValue		( lua_State* L ) {
 }
 
 int MOAIMaterial::_setDynamicShaderValue	( lua_State* L ) {
-  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
-  return 0;
+	MOAI_LUA_SETUP ( MOAIMaterial, "UNS" )
+
+	STLString name		= state.GetValue < cc8* >( 3, "" );
+	u32  type			= state.GetValue < u32 >( 2, DYNAMICVALUE_NONE );
+	u32  idx = 0;
+
+	if (self->mShader) {
+		idx = self->mShader->GetAttrIdForUniform(name.str());
+	}
+
+	if (type == DYNAMICVALUE_SIMTIME)
+		self->mShaderSimTimeAttr = idx;
+
+	return 0;
 }
 
 int MOAIMaterial::_setTexture		( lua_State* L ) {
@@ -174,13 +186,17 @@ int MOAIMaterial::_setBlendMode		( lua_State* L ) {
 }
 
 int MOAIMaterial::_clearShaderValues	( lua_State* L ) {
-  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
-  return 0;
+	MOAI_LUA_SETUP ( MOAIMaterial, "U" )
+	self->mShaderValues.clear();
+	self->mTexturesUsed = 0;
+	self->mMultiTexture.Set ( *self, 0 );
+	return 0;
 }
 
 int MOAIMaterial::_clearDynamicShaderValues( lua_State* L ) {
-  fprintf(stderr, "STUB: %s\n", __PRETTY_FUNCTION__);
-  return 0;
+	MOAI_LUA_SETUP ( MOAIMaterial, "U" )
+	self->mShaderSimTimeAttr = 0;
+	return 0;
 }
 
 int MOAIMaterial::_resetPermutationState	( lua_State* L ) {
@@ -199,7 +215,7 @@ int MOAIMaterial::_setPermutationSwitch	( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
-MOAIMaterial::MOAIMaterial () : mTexturesUsed(0) {
+MOAIMaterial::MOAIMaterial () : mTexturesUsed(0), mShaderSimTimeAttr(0) {
 
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAINode )
@@ -264,6 +280,12 @@ void MOAIMaterial::LoadGfxState()
 		     iter != mShaderValues.end(); ++iter) {
 		  this->mShader->ApplyAttrOp((*iter).first,
 					     (*iter).second, MOAIAttrOp::SET);
+		}
+		if (this->mShaderSimTimeAttr) {
+		  MOAIAttrOp attrOp;
+		  attrOp.SetValue<float>(ZLDeviceTime::GetTimeInSeconds());
+		  this->mShader->ApplyAttrOp(this->mShaderSimTimeAttr,
+					     attrOp, MOAIAttrOp::SET);
 		}
 		this->mShader->BindUniforms();
 		if (mMultiTexture)
