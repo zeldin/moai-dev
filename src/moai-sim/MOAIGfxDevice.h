@@ -298,7 +298,7 @@ public:
 	void					SetShaderPreset			( u32 preset );
 	bool					SetTexture				();
 	bool					SetTexture				( MOAITextureBase* texture );
-	bool					SetTexture				( MOAIMultiTexture* multi );
+	bool					SetTexture				( MOAIMultiTexture* multi, int offset = 0 );
 	
 	void					SetUVMtxMode			( u32 input, u32 output );
 	void					SetUVTransform			();

@@ -1136,7 +1136,7 @@ bool MOAIGfxDevice::SetTexture ( MOAITextureBase* texture ) {
 }
 
 //----------------------------------------------------------------//
-bool MOAIGfxDevice::SetTexture ( MOAIMultiTexture* multi ) {
+bool MOAIGfxDevice::SetTexture ( MOAIMultiTexture* multi, int offset ) {
 
 	if ( !multi ) {
 		return this->SetTexture ();
@@ -1153,10 +1153,10 @@ bool MOAIGfxDevice::SetTexture ( MOAIMultiTexture* multi ) {
 	}
 	
 	// disable any unused textures
-	this->DisableTextureUnits ( total );
+	this->DisableTextureUnits ( total + offset );
 	
 	for ( u32 i = 0; i < total; ++i ) {
-		this->SetTexture ( i, multi->mTextures [ i ]);
+		this->SetTexture ( i + offset, multi->mTextures [ i ]);
 	}
 	return true;
 }
