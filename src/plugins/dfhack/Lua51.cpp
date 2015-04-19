@@ -233,3 +233,393 @@ void Lua51::Function::pushConstant(MOAILuaState &state, int idx)
 }
 
 //----------------------------------------------------------------//
+
+const char * const Lua51::OpcodeName[NUM_OPCODES] = {
+  "MOVE",
+  "LOADK",
+  "LOADBOOL",
+  "LOADNIL",
+  "GETUPVAL",
+  "GETGLOBAL",
+  "GETTABLE",
+  "SETGLOBAL",
+  "SETUPVAL",
+  "SETTABLE",
+  "NEWTABLE",
+  "SELF",
+  "ADD",
+  "SUB",
+  "MUL",
+  "DIV",
+  "MOD",
+  "POW",
+  "UNM",
+  "NOT",
+  "LEN",
+  "CONCAT",
+  "JMP",
+  "EQ",
+  "LT",
+  "LE",
+  "TEST",
+  "TESTSET",
+  "CALL",
+  "TAILCALL",
+  "RETURN",
+  "FORLOOP",
+  "FORPREP",
+  "TFORLOOP",
+  "SETLIST",
+  "CLOSE",
+  "CLOSURE",
+  "VARARG"
+};
+
+//----------------------------------------------------------------//
+
+#define opmode(t,a,b,c,m) (((t)<<7) | ((a)<<6) | ((b)<<4) | ((c)<<2) | (m))
+
+const u8 Lua51::OpModes[NUM_OPCODES] = {
+/*       T  A    B       C     mode		   opcode	*/
+  opmode(0, 1, OpArgR, OpArgN, iABC) 		/* OP_MOVE */
+ ,opmode(0, 1, OpArgK, OpArgN, iABx)		/* OP_LOADK */
+ ,opmode(0, 1, OpArgU, OpArgU, iABC)		/* OP_LOADBOOL */
+ ,opmode(0, 1, OpArgR, OpArgN, iABC)		/* OP_LOADNIL */
+ ,opmode(0, 1, OpArgU, OpArgN, iABC)		/* OP_GETUPVAL */
+ ,opmode(0, 1, OpArgK, OpArgN, iABx)		/* OP_GETGLOBAL */
+ ,opmode(0, 1, OpArgR, OpArgK, iABC)		/* OP_GETTABLE */
+ ,opmode(0, 0, OpArgK, OpArgN, iABx)		/* OP_SETGLOBAL */
+ ,opmode(0, 0, OpArgU, OpArgN, iABC)		/* OP_SETUPVAL */
+ ,opmode(0, 0, OpArgK, OpArgK, iABC)		/* OP_SETTABLE */
+ ,opmode(0, 1, OpArgU, OpArgU, iABC)		/* OP_NEWTABLE */
+ ,opmode(0, 1, OpArgR, OpArgK, iABC)		/* OP_SELF */
+ ,opmode(0, 1, OpArgK, OpArgK, iABC)		/* OP_ADD */
+ ,opmode(0, 1, OpArgK, OpArgK, iABC)		/* OP_SUB */
+ ,opmode(0, 1, OpArgK, OpArgK, iABC)		/* OP_MUL */
+ ,opmode(0, 1, OpArgK, OpArgK, iABC)		/* OP_DIV */
+ ,opmode(0, 1, OpArgK, OpArgK, iABC)		/* OP_MOD */
+ ,opmode(0, 1, OpArgK, OpArgK, iABC)		/* OP_POW */
+ ,opmode(0, 1, OpArgR, OpArgN, iABC)		/* OP_UNM */
+ ,opmode(0, 1, OpArgR, OpArgN, iABC)		/* OP_NOT */
+ ,opmode(0, 1, OpArgR, OpArgN, iABC)		/* OP_LEN */
+ ,opmode(0, 1, OpArgR, OpArgR, iABC)		/* OP_CONCAT */
+ ,opmode(0, 0, OpArgR, OpArgN, iAsBx)		/* OP_JMP */
+ ,opmode(1, 0, OpArgK, OpArgK, iABC)		/* OP_EQ */
+ ,opmode(1, 0, OpArgK, OpArgK, iABC)		/* OP_LT */
+ ,opmode(1, 0, OpArgK, OpArgK, iABC)		/* OP_LE */
+ ,opmode(1, 1, OpArgR, OpArgU, iABC)		/* OP_TEST */
+ ,opmode(1, 1, OpArgR, OpArgU, iABC)		/* OP_TESTSET */
+ ,opmode(0, 1, OpArgU, OpArgU, iABC)		/* OP_CALL */
+ ,opmode(0, 1, OpArgU, OpArgU, iABC)		/* OP_TAILCALL */
+ ,opmode(0, 0, OpArgU, OpArgN, iABC)		/* OP_RETURN */
+ ,opmode(0, 1, OpArgR, OpArgN, iAsBx)		/* OP_FORLOOP */
+ ,opmode(0, 1, OpArgR, OpArgN, iAsBx)		/* OP_FORPREP */
+ ,opmode(1, 0, OpArgN, OpArgU, iABC)		/* OP_TFORLOOP */
+ ,opmode(0, 0, OpArgU, OpArgU, iABC)		/* OP_SETLIST */
+ ,opmode(0, 0, OpArgN, OpArgN, iABC)		/* OP_CLOSE */
+ ,opmode(0, 1, OpArgU, OpArgN, iABx)		/* OP_CLOSURE */
+ ,opmode(0, 1, OpArgU, OpArgN, iABC)		/* OP_VARARG */
+};
+
+//----------------------------------------------------------------//
+
+int Lua51::_GET_OPCODE_NAME ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+  int opcode = instruction & 0x3f;
+  lua_pushstring(state, (opcode < NUM_OPCODES? OpcodeName[opcode] : "???"));
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_getOpMode ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+  int opcode = instruction & 0x3f;
+  lua_pushinteger(state, (opcode < NUM_OPCODES? (OpModes[opcode]&3) : 0));
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_getCMode ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+  int opcode = instruction & 0x3f;
+  lua_pushinteger(state, (opcode < NUM_OPCODES? ((OpModes[opcode]>>2)&3) : 0));
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_getBMode ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+  int opcode = instruction & 0x3f;
+  lua_pushinteger(state, (opcode < NUM_OPCODES? ((OpModes[opcode]>>4)&3) : 0));
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_testAMode ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+  int opcode = instruction & 0x3f;
+  lua_pushboolean(state, (opcode < NUM_OPCODES? ((OpModes[opcode]>>6)&1) : 0));
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_GETARG_A ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+
+  int a = (instruction >> 6) & 0xff;
+  lua_pushinteger(state, a);
+
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_GETARG_B ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+
+  int b = (instruction >> 23) & 0x1ff;
+  lua_pushinteger(state, b);
+
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_GETARG_B_FB2INT ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+
+  int b = (instruction >> 23) & 0x1ff;
+  int e = (b >> 3) & 31;
+  if(e) b = ((b & 7)+8) << (e - 1);
+  lua_pushinteger(state, b);
+
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_GETARG_C ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+
+  int c = (instruction >> 14) & 0x1ff;
+  lua_pushinteger(state, c);
+
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_GETARG_C_FB2INT ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+
+  int c = (instruction >> 14) & 0x1ff;
+  int e = (c >> 3) & 31;
+  if(e) c = ((c & 7)+8) << (e - 1);
+  lua_pushinteger(state, c);
+
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_GETARG_Bx ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+
+  int bx = (instruction >> 14) & 0x3ffff;
+  lua_pushinteger(state, bx);
+
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::_GETARG_sBx ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+
+  int bx = (instruction >> 14) & 0x3ffff;
+  bx -= 0x1ffff;
+  lua_pushinteger(state, bx);
+
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::Instruction__index ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "US" )) return 0;
+  size_t ilen;
+  const char *index = lua_tolstring(state, 2, &ilen);
+  switch(ilen) {
+  case 8:
+    if (index[0] == 'G')
+      switch(index[7]) {
+      case 'A':
+	if (!strcmp(index, "GETARG_A")) {
+	  lua_pushcfunction(state, _GETARG_A);
+	  return 1;
+	}
+	break;
+      case 'B':
+	if (!strcmp(index, "GETARG_B")) {
+	  lua_pushcfunction(state, _GETARG_B);
+	  return 1;
+	}
+	break;
+      case 'C':
+	if (!strcmp(index, "GETARG_C")) {
+	  lua_pushcfunction(state, _GETARG_C);
+	  return 1;
+	}
+	break;
+      }
+    else if (index[0] == 'g')
+      switch(index[3]) {
+      case 'B':
+	if (!strcmp(index, "getBMode")) {
+	  lua_pushcfunction(state, _getBMode);
+	  return 1;
+	}
+	break;
+      case 'C':
+	if (!strcmp(index, "getCMode")) {
+	  lua_pushcfunction(state, _getCMode);
+	  return 1;
+	}
+	break;
+      }
+    break;
+  case 9:
+    switch(index[0]) {
+    case 'G':
+      if (!strcmp(index, "GETARG_Bx")) {
+	lua_pushcfunction(state, _GETARG_Bx);
+	return 1;
+      }
+      break;
+    case 'g':
+      if (!strcmp(index, "getOpMode")) {
+	lua_pushcfunction(state, _getOpMode);
+	return 1;
+      }
+      break;
+    case 't':
+      if (!strcmp(index, "testAMode")) {
+	lua_pushcfunction(state, _testAMode);
+	return 1;
+      }
+      break;
+    }
+    break;
+  case 10:
+    if (!strcmp(index, "GETARG_sBx")) {
+      lua_pushcfunction(state, _GETARG_sBx);
+      return 1;
+    }
+    break;
+  case 11:
+    if (!strcmp(index, "instruction")) {
+      u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+      lua_pushinteger(state, instruction);
+      return 1;
+    }
+    break;
+  case 15:
+    switch(index[7]) {
+    case 'B':
+      if (!strcmp(index, "GETARG_B_FB2INT")) {
+	lua_pushcfunction(state, _GETARG_B_FB2INT);
+	return 1;
+      }
+      break;
+    case 'C':
+      if (!strcmp(index, "GETARG_C_FB2INT")) {
+	lua_pushcfunction(state, _GETARG_C_FB2INT);
+	return 1;
+      }
+      break;
+    case 'O':
+      if (!strcmp(index, "GET_OPCODE_NAME")) {
+	lua_pushcfunction(state, _GET_OPCODE_NAME);
+	return 1;
+      }
+      break;
+    }
+    break;
+  }
+
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+  fprintf(stderr, "Index %s %u\n", index, (unsigned)instruction);
+  return 0;
+}
+
+//----------------------------------------------------------------//
+
+int Lua51::Instruction__tostring ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "U" )) return 0;
+  u32 instruction = *static_cast<u32 *>(lua_touserdata(state, 1));
+  int opcode = instruction & 0x3f;
+  char buf[16];
+  snprintf(buf, sizeof(buf), "0x%08x", (unsigned)instruction);
+  lua_pushstring(state, buf);
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
+void Lua51::PushInstruction(MOAILuaState &state, u32 instruction)
+{
+  *static_cast<u32 *>(lua_newuserdata(state, sizeof(u32))) = instruction;
+  lua_newtable(state);
+  lua_pushcfunction(state, Instruction__index);
+  lua_setfield(state, -2, "__index");
+  lua_pushcfunction(state, Instruction__tostring);
+  lua_setfield(state, -2, "__tostring");
+  lua_setmetatable(state, -2);
+}
+
+//----------------------------------------------------------------//

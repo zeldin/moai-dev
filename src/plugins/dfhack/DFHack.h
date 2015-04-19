@@ -16,6 +16,8 @@ private:
 	  static int	_setTimeDilation ( lua_State* L );
 	  static int	_registerThread ( lua_State* L );
 	  static int	_registerWrappedThread ( lua_State* L );
+	  static int	_getDisassembly ( lua_State* L );
+	  static int	_getAssetListing ( lua_State* L );
 public:
 	  DECL_LUA_SINGLETON ( DFHack )
 

@@ -4,6 +4,7 @@
 #include <moai-sim/headers.h>
 
 #include <dfhack/DFHack.h>
+#include <dfhack/Lua5Introspection.h>
 
 #include <fts.h>
 
@@ -199,6 +200,68 @@ int DFHack::_registerWrappedThread ( lua_State* L )
 
 //----------------------------------------------------------------//
 
+int DFHack::_getDisassembly ( lua_State* L )
+{
+  MOAILuaState state ( L );
+
+  if (lua_type (L, 1) == LUA_TFUNCTION) {
+#if MOAI_WITH_LUAJIT
+    return luaL_error(L, "DFHack.getDisassembly currently not supported for LuaJIT");
+#else
+    return static_cast<int>(Lua5Introspection::PushDisassembly(state, static_cast<const Closure*>(lua_topointer(L, 1))));
+#endif    
+  } else {
+    return luaL_argerror(L, 1, "function expected");
+  }
+}
+
+//----------------------------------------------------------------//
+
+int DFHack::_getAssetListing ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "S" )) return 0;
+  cc8 *p = state.GetValue<cc8*>(1, "");
+  fprintf(stderr, "getAssetListing(\"%s\")\n", p);
+  STLString oldPath = ZLFileSys::GetCurrentPath();
+  if ( !ZLFileSys::SetCurrentPath ( p )) {
+    return 0;
+  }
+
+  ZLDirectoryItr dirItr;
+  lua_newtable ( L );
+  int n = 0;
+  dirItr.Start ();
+  while ( dirItr.NextDirectory ()) {
+    if( strcmp(dirItr.Current(), "..") == 0 ||
+	strcmp(dirItr.Current(), ".") == 0 ) {	
+      continue;	
+    }
+    lua_pushstring ( L, dirItr.Current ());
+    n++;
+#ifdef luaL_setn
+    luaL_setn ( L, -2, n );  // new size
+#endif
+    lua_rawseti ( L, -2, n );  // t[pos] = v
+  }
+  lua_newtable ( L );
+  n = 0;
+  dirItr.Start ();
+  while ( dirItr.NextFile ()) {
+    lua_pushstring ( L, dirItr.Current ());
+    n++;
+#ifdef luaL_setn
+    luaL_setn ( L, -2, n );  // new size
+#endif
+    lua_rawseti ( L, -2, n );  // t[pos] = v
+  }
+
+  ZLFileSys::SetCurrentPath ( oldPath );
+  return 2;
+}
+
+//----------------------------------------------------------------//
+
 DFHack::DFHack ()
 {
   RTTI_BEGIN
@@ -240,6 +303,8 @@ void DFHack::RegisterLuaClass ( MOAILuaState& state )
     { "setTimeDilation",  _setTimeDilation },
     { "registerThread",  _registerThread },
     { "registerWrappedThread",  _registerWrappedThread },
+    { "getDisassembly",  _getDisassembly },
+    { "getAssetListing", _getAssetListing },
     { NULL, NULL }
   };
   luaL_register ( state, 0, regTable );

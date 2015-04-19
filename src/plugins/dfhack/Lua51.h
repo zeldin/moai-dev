@@ -46,7 +46,8 @@ class Lua51
     OP_SETLIST,
     OP_CLOSE,
     OP_CLOSURE,
-    OP_VARARG
+    OP_VARARG,
+    NUM_OPCODES
   } Opcode;
 
   typedef enum {
@@ -182,6 +183,26 @@ class Lua51
     MOAILuaStrongRef constants;
     u8 maxStackSize;
   };
+
+  static void PushInstruction(MOAILuaState &state, u32 instruction);
+ private:
+  static const char * const OpcodeName[NUM_OPCODES];
+  static const u8 OpModes[NUM_OPCODES];
+
+  static int	Instruction__index ( lua_State* L );
+  static int	Instruction__tostring ( lua_State* L );
+  static int	_GET_OPCODE_NAME ( lua_State* L );
+  static int	_getOpMode ( lua_State* L );
+  static int	_getCMode ( lua_State* L );
+  static int	_getBMode ( lua_State* L );
+  static int	_testAMode ( lua_State* L );
+  static int	_GETARG_A ( lua_State* L );
+  static int	_GETARG_B ( lua_State* L );
+  static int	_GETARG_B_FB2INT ( lua_State* L );
+  static int	_GETARG_C ( lua_State* L );
+  static int	_GETARG_C_FB2INT ( lua_State* L );
+  static int	_GETARG_Bx ( lua_State* L );
+  static int	_GETARG_sBx ( lua_State* L );
 };
 
 #endif
