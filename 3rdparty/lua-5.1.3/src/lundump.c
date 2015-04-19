@@ -178,12 +178,17 @@ static Proto* LoadFunction(LoadState* S, TString* p)
  return f;
 }
 
-static void LoadHeader(LoadState* S)
+static Proto *(*undump_delegate) (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name, const char *header);
+
+void luaU_set_undump_delegate (Proto *(*delegate) (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name, const char *header))
+{
+  undump_delegate = delegate;
+}
+
+static void LoadHeader(LoadState* S, const char *s)
 {
  char h[LUAC_HEADERSIZE];
- char s[LUAC_HEADERSIZE];
  luaU_header(h);
- LoadBlock(S,s,LUAC_HEADERSIZE);
  IF (memcmp(h,s,LUAC_HEADERSIZE)!=0, "bad header");
 }
 
@@ -193,6 +198,7 @@ static void LoadHeader(LoadState* S)
 Proto* luaU_undump (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name)
 {
  LoadState S;
+ char s[LUAC_HEADERSIZE];
  if (*name=='@' || *name=='=')
   S.name=name+1;
  else if (*name==LUA_SIGNATURE[0])
@@ -202,7 +208,13 @@ Proto* luaU_undump (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name)
  S.L=L;
  S.Z=Z;
  S.b=buff;
- LoadHeader(&S);
+ LoadBlock(&S,s,LUAC_HEADERSIZE);
+ if (undump_delegate) {
+   Proto* p = undump_delegate(S.L, S.Z, S.b, S.name, s);
+   if (p != NULL)
+     return p;
+ }
+ LoadHeader(&S,s);
  return LoadFunction(&S,luaS_newliteral(L,"=?"));
 }
 

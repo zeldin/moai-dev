@@ -13,6 +13,8 @@
 /* load one chunk; from lundump.c */
 LUAI_FUNC Proto* luaU_undump (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name);
 
+LUAI_FUNC void luaU_set_undump_delegate (Proto *(*delegate) (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name, const char *header));
+
 /* make header; from lundump.c */
 LUAI_FUNC void luaU_header (char* h);
 

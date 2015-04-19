@@ -7,6 +7,7 @@
 #include <dfhack/DFHack.h>
 #include <dfhack/DFHackSubscriber.h>
 #include <dfhack/MOAIFmodEventMgr.h>
+#include <dfhack/Lua5PortableUndump.h>
 
 static bool sIsInitialized = false;
 
@@ -30,6 +31,10 @@ void DFHackContextInitialize () {
   REGISTER_LUA_CLASS ( DFHack )
   REGISTER_LUA_CLASS ( DFHackSubscriber )
   REGISTER_LUA_CLASS ( MOAIFmodEventMgr )
+
+#if !MOAI_WITH_LUAJIT
+    Lua5PortableUndump::InstallDelegate();
+#endif
 
   char buf[PATH_MAX+1];
   ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf)-1);
