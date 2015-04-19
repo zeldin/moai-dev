@@ -287,9 +287,13 @@ void DFHack::RegisterLuaClass ( MOAILuaState& state )
   lua_newtable(state);
   state.SetField(-1, "iABC", Lua51::iABC);
   state.SetField(-1, "iABx", Lua51::iABx);
+  state.SetField(-1, "iAsBx", Lua51::iAsBx);
   lua_setfield(state, -2, "OpMode");
   lua_newtable(state);
+  state.SetField(-1, "OpArgN", Lua51::OpArgN);
+  state.SetField(-1, "OpArgU", Lua51::OpArgU);
   state.SetField(-1, "OpArgR", Lua51::OpArgR);
+  state.SetField(-1, "OpArgK", Lua51::OpArgK);
   lua_setfield(state, -2, "OpArgMask");
   lua_setfield(state, -2, "ops");
 
