@@ -9,4 +9,4 @@ Uncompiler.setJarPath(mydir .. "unluac.jar")
 
 local Installer = require('Installer')
 MOAIFileSystem.setWorkingDirectory(os.getenv("SRCDIR"))
-Installer.install(os.getenv("DESTDIR"))
+Installer.install(os.getenv("DESTDIR"), not os.getenv("NO_UNCOMPILATION"))

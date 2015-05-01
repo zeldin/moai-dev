@@ -42,10 +42,12 @@ function Installer.copyfiles(index, destdir)
    io.output():write(" Done\r\n")
 end
 
-function Installer.install(destdir)
+function Installer.install(destdir, do_uncompile)
    local index = Indexer.index({"Data", "Linux/Audio", "Linux/Munged"})
-   Installer.uncompile(index.lua_bc51, destdir)
-   index.lua_bc51 = nil
+   if do_uncompile then
+      Installer.uncompile(index.lua_bc51, destdir)
+      index.lua_bc51 = nil
+   end
    Installer.copyfiles(index, destdir)
 end
 
