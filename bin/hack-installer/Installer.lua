@@ -7,11 +7,16 @@ function Installer.uncompile(paths, destdir)
    for i,path in pairs(paths) do
       io.output():write("\rUncompiling files: "..i.."/"..#paths);
       io.output():flush()
-      local source = Uncompiler.uncompile(path)
-      local stream = MOAIFileStream.new ()
-      stream:open(destdir.."/"..path, MOAIFileStream.READ_WRITE_NEW)
-      stream:write(source)
-      stream:close()
+      local status, source = pcall(Uncompiler.uncompile, path)
+      if status then
+	 local stream = MOAIFileStream.new ()
+	 stream:open(destdir.."/"..path, MOAIFileStream.READ_WRITE_NEW)
+	 stream:write(source)
+	 stream:close()
+      else
+	 io.output():write("\rFailed to uncompile "..path.."\n");
+	 MOAIFileSystem.copy(path, destdir.."/"..path)
+      end
    end
    io.output():write(" Done\r\n")
 end
