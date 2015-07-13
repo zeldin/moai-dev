@@ -5,6 +5,8 @@
 #include <zl-util/ZLColor.h>
 #include <zl-util/ZLInterpolate.h>
 
+#include <endian.h>
+
 #define WR 0.299f
 #define WG 0.587f
 #define WB 0.114f
@@ -452,11 +454,19 @@ void ZLColor::PremultiplyAlpha ( void* colors, Format format, u32 nColors ) {
 		
 			for ( u32 i = 0; i < nColors; ++i ) {
 				color = *( u32* )colors;
+#if __BYTE_ORDER == __LITTLE_ENDIAN
 				alpha = ( color >> 0x18 ) & 0xFF;
 				*( u32* )colors =	((((( color >> 0x00 ) & 0xFF ) * alpha ) >> 0x08 ) << 0x00 ) +
 									((((( color >> 0x08 ) & 0xFF ) * alpha ) >> 0x08 ) << 0x08 ) +
 									((((( color >> 0x10 ) & 0xFF ) * alpha ) >> 0x08 ) << 0x10 ) +
 									( alpha << 0x18 );
+#else
+				alpha = ( color >> 0x00 ) & 0xFF;
+				*( u32* )colors =	((((( color >> 0x08 ) & 0xFF ) * alpha ) >> 0x08 ) << 0x08 ) +
+									((((( color >> 0x10 ) & 0xFF ) * alpha ) >> 0x08 ) << 0x10 ) +
+									((((( color >> 0x18 ) & 0xFF ) * alpha ) >> 0x08 ) << 0x18 ) +
+									( alpha << 0x00 );
+#endif
 				colors = ( void* )(( uintptr )colors + 4 );
 			}
 			break;
