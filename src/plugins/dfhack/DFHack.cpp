@@ -217,6 +217,38 @@ int DFHack::_getDisassembly ( lua_State* L )
 
 //----------------------------------------------------------------//
 
+int DFHack::_reassemble ( lua_State* L )
+{
+  MOAILuaState state ( L );
+  if ( !state.CheckParams ( 1, "T" )) return 0;
+
+  state.GetField(1, "proto");
+  if (!state.IsType(-1, LUA_TTABLE))
+    return luaL_argerror(L, 1, "table expected at index proto");
+
+  Lua51::Function func;
+  if (!func.create(state, -1))
+    return 0;
+
+  ZLMemStream stream;
+  Lua51::DumpWriter writer(stream);
+  writer.WriteHeader();
+  func.dump(writer, state);
+
+  size_t len = stream.GetLength();
+  char *buf = static_cast<char *>(malloc(len));
+  if (buf) {
+    stream.Seek(0, SEEK_SET);
+    len = stream.ReadBytes(buf, len);
+    lua_pushlstring(state, buf, len);
+    free(buf);
+  } else
+    state.Push();
+  return 1;
+}
+
+//----------------------------------------------------------------//
+
 int DFHack::_getAssetListing ( lua_State* L )
 {
   MOAILuaState state ( L );
@@ -308,6 +340,7 @@ void DFHack::RegisterLuaClass ( MOAILuaState& state )
     { "registerThread",  _registerThread },
     { "registerWrappedThread",  _registerWrappedThread },
     { "getDisassembly",  _getDisassembly },
+    { "reassemble",  _reassemble },
     { "getAssetListing", _getAssetListing },
     { NULL, NULL }
   };

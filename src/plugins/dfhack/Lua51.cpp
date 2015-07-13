@@ -22,9 +22,20 @@ const u8 Lua51::HEADER[HEADERSIZE] = {
 
 bool Lua51::Function::create(MOAILuaState &state, int instrIdx, int constIdx, int maxStackSize)
 {
+  if (source)
+    delete[] source;
+  source = NULL;
+  sizesource = 0;
+  if (protos)
+    delete[] protos;
+  protos = NULL;
+  numprotos = 0;
   sizecode = lua_objlen(state, instrIdx);
   sizek = lua_objlen(state, constIdx);
   constants.SetRef(state, constIdx);
+  nUps = 0;
+  numParams = 0;
+  isVararg = 0;
   this->maxStackSize = maxStackSize;
   if (code)
     delete[] code;
@@ -59,14 +70,89 @@ bool Lua51::Function::create(MOAILuaState &state, int instrIdx, int constIdx, in
 
 //----------------------------------------------------------------//
 
+bool Lua51::Function::create(MOAILuaState &state, int idx)
+{
+  if (source)
+    delete[] source;
+  if (state.GetFieldWithType(idx, "source", LUA_TSTRING)) {
+    size_t len = 0;
+    const char *str = lua_tolstring (state, -1, &len);
+    len++;
+    source = new char[len];
+    if (!source)
+      return false;
+    sizesource = len;
+    memcpy(source, str, len);
+    state.Pop(1);
+  } else {
+    source = NULL;
+    sizesource = 0;
+  }
+  nUps = state.GetField<u8>(idx, "nups", 0);
+  numParams = state.GetField<u8>(idx, "numparams", 0);
+  if (state.GetField<bool>(idx, "is_vararg", false))
+    isVararg = 2;
+  else
+    isVararg = state.GetField<u8>(idx, "is_vararg", 0);
+  maxStackSize = state.GetField<u8>(idx, "maxstacksize", 0);
+  if (code)
+    delete[] code;
+  if (state.GetFieldWithType(idx, "code", LUA_TTABLE)) {
+    sizecode = lua_objlen(state, -1);
+    code = new u32[sizecode];
+    if (!code)
+      return false;
+    for (int i = 0; i < sizecode; i++) {
+      state.GetField(-1, i+1);
+      code[i] = state.GetField<u32>(-1, "instruction", 0);
+      state.Pop(1);
+    }
+    state.Pop(1);
+  } else {
+    sizecode = 0;
+    code = NULL;
+  }
+  if (state.GetFieldWithType(idx, "constants", LUA_TTABLE)) {
+    sizek = lua_objlen(state, -1);
+    constants.SetRef(state, -1);
+    state.Pop(1);
+  } else {
+    sizek = 0;
+    constants.Clear();
+  }
+  if (protos)
+    delete[] protos;
+  if (state.GetFieldWithType(idx, "protos", LUA_TTABLE)) {
+    numprotos = lua_objlen(state, -1);
+    if (numprotos) {
+      protos = new Function[numprotos];
+      if (!protos)
+	return false;
+      for (int i = 0; i < numprotos; i++) {
+	state.GetField(-1, i+1);
+	protos[i].create(state, -1);
+	state.Pop(1);
+      }
+    } else
+      protos = NULL;
+    state.Pop(1);
+  } else {
+    numprotos = 0;
+    protos = NULL;
+  }
+  return true;
+}
+
+//----------------------------------------------------------------//
+
 void Lua51::Function::dump(DumpWriter &writer, MOAILuaState &state)
 {
-  writer.WriteString();
+  writer.WriteString(source, sizesource);
   writer.WriteInt(0);
   writer.WriteInt(0);
-  writer.WriteByte(0);
-  writer.WriteByte(0);
-  writer.WriteByte(0);
+  writer.WriteByte(nUps);
+  writer.WriteByte(numParams);
+  writer.WriteByte(isVararg);
   writer.WriteByte(maxStackSize);
   writer.WriteInt(sizecode);
   for (int i = 0; i<sizecode; i++)
@@ -101,7 +187,12 @@ void Lua51::Function::dump(DumpWriter &writer, MOAILuaState &state)
     }
     state.Pop(1);
   }
-  writer.WriteInt(0);
+  if (protos) {
+    writer.WriteInt(numprotos);
+    for (int i=0; i<numprotos; i++)
+      protos[i].dump(writer, state);
+  } else
+    writer.WriteInt(0);
   writer.WriteInt(0);
   writer.WriteInt(0);
   writer.WriteInt(0);
