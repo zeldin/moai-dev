@@ -51,6 +51,8 @@ bool Lua5Introspection::PushProto(MOAILuaState &state, Proto *proto)
   lua_setfield(state, -2, "numparams");
   lua_pushboolean(state, proto->is_vararg);
   lua_setfield(state, -2, "is_vararg");
+  lua_pushinteger(state, proto->maxstacksize);
+  lua_setfield(state, -2, "maxstacksize");
   lua_newtable(state);
   lua_newtable(state);
   for (int i = 0; i < proto->sizelineinfo; i++) {
