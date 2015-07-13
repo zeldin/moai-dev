@@ -47,7 +47,9 @@ int MOAIMaterial::_setShaderValue		( lua_State* L ) {
 	  case VALUETYPE_TEXTURE:
 	    {
 	      MOAITextureBase* texture =
-		state.GetLuaObject < MOAITextureBase >( 4, true );
+		dynamic_cast<MOAITextureBase*>(MOAITexture::AffirmTexture(state, 4));
+	      if (!texture)
+		break;
 	      if (!oldTexture)
 		for (texid=0; ; texid++) {
 		  if (!(self->mTexturesUsed & (1<<texid)))
