@@ -284,6 +284,7 @@ public:
 	void					SetDepthFunc			( int depthFunc );
 	void					SetDepthMask			( bool depthMask );
 	void					SetFrameBuffer			( MOAIFrameBuffer* frameBuffer );
+	MOAIFrameBuffer *			GetFrameBuffer ( )	{ return mFrameBuffer; }
 	bool					SetGfxState				( MOAIGfxState* gfxState );
 	void					SetPenColor				( u32 color );
 	void					SetPenColor				( const ZLColorVec& colorVec );

@@ -783,15 +783,16 @@ void MOAILayer::RegisterLuaFuncs ( MOAILuaState& state ) {
 
 //----------------------------------------------------------------//
 void MOAILayer::Render () {
-
-	if (mFrameBuffer) {
-		MOAIGfxDevice& gfxDevice = MOAIGfxDevice::Get ();
+	
+	MOAIGfxDevice& gfxDevice = MOAIGfxDevice::Get ();
+	if (mFrameBuffer != gfxDevice.GetFrameBuffer()) {
 		gfxDevice.SetFrameBuffer(mFrameBuffer);
-		this->Draw ( MOAIProp::NO_SUBPRIM_ID );
-		gfxDevice.SetFrameBuffer(0);
-	} else {
-		this->Draw ( MOAIProp::NO_SUBPRIM_ID );
+		if (mFrameBuffer) {
+			gfxDevice.SetScissorRect ();
+			mFrameBuffer->ClearSurface();
+		}
 	}
+	this->Draw ( MOAIProp::NO_SUBPRIM_ID );
 }
 
 //----------------------------------------------------------------//
