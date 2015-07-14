@@ -169,11 +169,31 @@ class Lua51
   };
 
   class Function {
+  private:
+    class LocVar {
+    public:
+      LocVar() : startpc(0), endpc(0) {}
+      ~LocVar() {}
+      bool create(MOAILuaState &state, int idx);
+      void dump(DumpWriter &writer);
+    private:
+      s32 startpc, endpc;
+      STLString varname;
+    };
+
   public:
-    Function() : sizecode(0), sizek(0), sizesource(0), numprotos(0),
-      code(NULL), source(NULL), protos(NULL), nUps(0), numParams(0),
-      isVararg(0), maxStackSize(0) {}
-    ~Function() { if(code) delete[] code; if(source) delete[] source; if(protos) delete[] protos; }
+    Function() : sizecode(0), sizelineinfo(0), sizelocvars(0), sizeupvalues(0),
+      sizek(0), sizesource(0), numprotos(0), code(NULL), lineinfo(NULL),
+      locvars(NULL), upvalues(NULL), source(NULL), protos(NULL), lineDefined(0),
+      lastLineDefined(0), nUps(0), numParams(0), isVararg(0), maxStackSize(0) {}
+    ~Function() {
+      if(code) delete[] code;
+      if(lineinfo) delete[] lineinfo;
+      if(locvars) delete[] locvars;
+      if(upvalues) delete[] upvalues;
+      if(source) delete[] source;
+      if(protos) delete[] protos;
+    }
     bool create(MOAILuaState &state, int instrIdx, int constIdx, int maxStackSize);
     bool create(MOAILuaState &state, int idx);
     void dump(DumpWriter &writer, MOAILuaState &state);
@@ -181,11 +201,16 @@ class Lua51
     int interpret(MOAILuaState &state);
   private:
     void pushConstant(MOAILuaState &state, int idx);
-    s32 sizecode, sizek, sizesource, numprotos;
+    s32 sizecode, sizelineinfo, sizelocvars, sizeupvalues;
+    s32 sizek, sizesource, numprotos;
     u32 *code;
+    s32 *lineinfo;
+    LocVar *locvars;
+    STLString *upvalues;
     char *source;
     MOAILuaStrongRef constants;
     Function *protos;
+    s32 lineDefined, lastLineDefined;
     u8 nUps, numParams, isVararg, maxStackSize;
   };
 

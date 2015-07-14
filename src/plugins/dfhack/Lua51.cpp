@@ -20,6 +20,31 @@ const u8 Lua51::HEADER[HEADERSIZE] = {
 
 //----------------------------------------------------------------//
 
+bool Lua51::Function::LocVar::create(MOAILuaState &state, int idx)
+{
+  if (state.GetFieldWithType(idx, "varname", LUA_TSTRING)) {
+    size_t len = 0;
+    const char *str = lua_tolstring (state, -1, &len);
+    len++;
+    varname = STLString(str, len);
+    state.Pop(1);
+  }
+  startpc = state.GetField<s32>(idx, "startpc", 0);
+  endpc = state.GetField<s32>(idx, "endpc", 0);
+  return true;
+}
+
+//----------------------------------------------------------------//
+
+void Lua51::Function::LocVar::dump(DumpWriter &writer)
+{
+  writer.WriteString(varname.c_str(), varname.length());
+  writer.WriteInt(startpc);
+  writer.WriteInt(endpc);
+}
+
+//----------------------------------------------------------------//
+
 bool Lua51::Function::create(MOAILuaState &state, int instrIdx, int constIdx, int maxStackSize)
 {
   if (source)
@@ -30,9 +55,23 @@ bool Lua51::Function::create(MOAILuaState &state, int instrIdx, int constIdx, in
     delete[] protos;
   protos = NULL;
   numprotos = 0;
+  if (lineinfo)
+    delete[] lineinfo;
+  lineinfo = NULL;
+  sizelineinfo = 0;
+  if (locvars)
+    delete[] locvars;
+  locvars = NULL;
+  sizelocvars = 0;
+  if (upvalues)
+    delete[] upvalues;
+  upvalues = NULL;
+  sizeupvalues = 0;
   sizecode = lua_objlen(state, instrIdx);
   sizek = lua_objlen(state, constIdx);
   constants.SetRef(state, constIdx);
+  lineDefined = 0;
+  lastLineDefined = 0;
   nUps = 0;
   numParams = 0;
   isVararg = 0;
@@ -88,6 +127,8 @@ bool Lua51::Function::create(MOAILuaState &state, int idx)
     source = NULL;
     sizesource = 0;
   }
+  lineDefined = state.GetField<s32>(idx, "linedefined", 0);
+  lastLineDefined = state.GetField<s32>(idx, "lastlinedefined", 0);
   nUps = state.GetField<u8>(idx, "nups", 0);
   numParams = state.GetField<u8>(idx, "numparams", 0);
   if (state.GetField<bool>(idx, "is_vararg", false))
@@ -140,6 +181,66 @@ bool Lua51::Function::create(MOAILuaState &state, int idx)
     numprotos = 0;
     protos = NULL;
   }
+  if (lineinfo)
+    delete[] lineinfo;
+  sizelineinfo = 0;
+  lineinfo = NULL;
+  if (locvars)
+    delete[] locvars;
+  sizelocvars = 0;
+  locvars = NULL;
+  if (upvalues)
+    delete[] upvalues;
+  sizeupvalues = 0;
+  upvalues = NULL;
+  if (state.GetFieldWithType(idx, "debug", LUA_TTABLE)) {
+    if (state.GetFieldWithType(-1, "lineinfo", LUA_TTABLE)) {
+      sizelineinfo = lua_objlen(state, -1);
+      if (sizelineinfo) {
+	lineinfo = new s32[sizelineinfo];
+	if (!lineinfo)
+	  return false;
+	for (int i = 0; i < sizelineinfo; i++) {
+	  lineinfo[i] = state.GetField<s32>(-1, i+1, 0);
+	}
+      }
+      state.Pop(1);
+    }
+    if (state.GetFieldWithType(-1, "locvars", LUA_TTABLE)) {
+      sizelocvars = lua_objlen(state, -1);
+      if (sizelocvars) {
+	locvars = new LocVar[sizelocvars];
+	if (!locvars)
+	  return false;
+	for (int i = 0; i < sizelocvars; i++) {
+	  state.GetField(-1, i+1);
+	  if (!locvars[i].create(state, -1))
+	    return false;
+	  state.Pop(1);
+	}
+      }
+      state.Pop(1);
+    }
+    if (state.GetFieldWithType(-1, "upvalues", LUA_TTABLE)) {
+      sizeupvalues = lua_objlen(state, -1);
+      if (sizeupvalues) {
+	upvalues = new STLString[sizeupvalues];
+	if (!upvalues)
+	  return false;
+	for (int i = 0; i < sizeupvalues; i++) {
+	  if (state.GetFieldWithType(-1, i+1, LUA_TSTRING)) {
+	    size_t len = 0;
+	    const char *str = lua_tolstring (state, -1, &len);
+	    len++;
+	    upvalues[i] = STLString(str, len);
+	    state.Pop(1);
+	  }
+	}
+      }
+      state.Pop(1);
+    }
+    state.Pop(1);
+  }
   return true;
 }
 
@@ -148,8 +249,8 @@ bool Lua51::Function::create(MOAILuaState &state, int idx)
 void Lua51::Function::dump(DumpWriter &writer, MOAILuaState &state)
 {
   writer.WriteString(source, sizesource);
-  writer.WriteInt(0);
-  writer.WriteInt(0);
+  writer.WriteInt(lineDefined);
+  writer.WriteInt(lastLineDefined);
   writer.WriteByte(nUps);
   writer.WriteByte(numParams);
   writer.WriteByte(isVararg);
@@ -193,9 +294,15 @@ void Lua51::Function::dump(DumpWriter &writer, MOAILuaState &state)
       protos[i].dump(writer, state);
   } else
     writer.WriteInt(0);
-  writer.WriteInt(0);
-  writer.WriteInt(0);
-  writer.WriteInt(0);
+  writer.WriteInt(sizelineinfo);
+  for (int i=0; i<sizelineinfo; i++)
+    writer.WriteInt(lineinfo[i]);
+  writer.WriteInt(sizelocvars);
+  for (int i=0; i<sizelocvars; i++)
+    locvars[i].dump(writer);
+  writer.WriteInt(sizeupvalues);
+  for (int i=0; i<sizeupvalues; i++)
+    writer.WriteString(upvalues[i].c_str(), upvalues[i].length());
 }
 
 //----------------------------------------------------------------//
