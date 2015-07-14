@@ -246,9 +246,14 @@ bool Lua51::Function::create(MOAILuaState &state, int idx)
 
 //----------------------------------------------------------------//
 
-void Lua51::Function::dump(DumpWriter &writer, MOAILuaState &state)
+void Lua51::Function::dump(DumpWriter &writer, MOAILuaState &state,
+			   const Function *parent)
 {
-  writer.WriteString(source, sizesource);
+  if (parent == NULL || parent->sizesource != sizesource ||
+      (sizesource>0 && memcmp(parent->source, source, sizesource)))
+    writer.WriteString(source, sizesource);
+  else
+    writer.WriteInt(0);
   writer.WriteInt(lineDefined);
   writer.WriteInt(lastLineDefined);
   writer.WriteByte(nUps);
@@ -291,7 +296,7 @@ void Lua51::Function::dump(DumpWriter &writer, MOAILuaState &state)
   if (protos) {
     writer.WriteInt(numprotos);
     for (int i=0; i<numprotos; i++)
-      protos[i].dump(writer, state);
+      protos[i].dump(writer, state, this);
   } else
     writer.WriteInt(0);
   writer.WriteInt(sizelineinfo);

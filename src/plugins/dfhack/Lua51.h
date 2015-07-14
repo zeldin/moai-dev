@@ -196,7 +196,7 @@ class Lua51
     }
     bool create(MOAILuaState &state, int instrIdx, int constIdx, int maxStackSize);
     bool create(MOAILuaState &state, int idx);
-    void dump(DumpWriter &writer, MOAILuaState &state);
+    void dump(DumpWriter &writer, MOAILuaState &state, const Function *parent=NULL);
     bool undump(DumpReader &reader, MOAILuaState &state);
     int interpret(MOAILuaState &state);
   private:
