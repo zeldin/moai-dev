@@ -45,6 +45,10 @@ bool Lua5Introspection::PushProto(MOAILuaState &state, Proto *proto)
   else
     lua_pushnil(state);
   lua_setfield(state, -2, "source");
+  lua_pushinteger(state, proto->linedefined);
+  lua_setfield(state, -2, "linedefined");
+  lua_pushinteger(state, proto->lastlinedefined);
+  lua_setfield(state, -2, "lastlinedefined");
   lua_pushinteger(state, proto->nups);
   lua_setfield(state, -2, "nups");
   lua_pushinteger(state, proto->numparams);
