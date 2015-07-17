@@ -1,3 +1,33 @@
+# Hack'n'Slash open source engine
+
+This is an open source re-implementation of the game engine
+used in the Double Fine game Hack'n'Slash, based on the regular
+MOAI development branch.
+
+The original Hack'n'Slash engine is based on MOAI, but contains game
+specific extensions, as well as some non game specific features not
+present in the MOAI mainline.
+
+To build open source Hack'n'Slash, the Linux Steam version of Hack'n'Slash
+is needed for the data files (which includes game scripts).  To build
+the engine, run the script
+
+	./bin/build-hack.sh <source directory> <target directory>
+
+where source directory is the location of the Steam files
+(e.g. $HOME/.local/share/Steam/steamapps/common/HacknSlash) and
+target directory is where you want to install the open source version.
+All necessary data files will be copied there, and any precompiled game
+scripts will be uncompiled in the process, turning them into source code
+as well.
+
+Note that sound is currently not supported by this engine since FMOD
+Designer does not have an open source edition.
+
+
+
+Original MOAI README follows...
+
 # Welcome to Moai!
 
 Thanks for checking out the Moai source code. Here's the scoop.
